@@ -1,4 +1,4 @@
-import { baseURL } from '../config/urls';
+import { baseURL, streamingURL } from '../config/urls';
 
 export const updatePlaylistApi = async (userInfo) => {
     const accessToken = userInfo.accessToken;
@@ -9,7 +9,7 @@ export const updatePlaylistApi = async (userInfo) => {
         ({ key, name, musicSrc, source, singer, cover, album, duration  }) => (
             {
                 _id: key, title: name,
-                musicSrc: '/' + source + '/' + musicSrc.split('/').pop(),
+                musicSrc: musicSrc.replace(streamingURL, ''),
                 source: source, artist: singer, thumbnail: cover, album: album, duration: duration
             }
         )
@@ -39,7 +39,7 @@ export const createPlaylistApi = async (userInfo) => {
         ({ key, name, musicSrc, source, singer, cover, album, duration  }) => (
             {
                 _id: key, title: name,
-                musicSrc: '/' + source + '/' + musicSrc.split('/').pop(),
+                musicSrc: musicSrc.replace(streamingURL, ''),
                 source: source, artist: singer, thumbnail: cover, album: album, duration: duration
             }
         )

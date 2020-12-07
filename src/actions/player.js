@@ -62,7 +62,7 @@ const prepareAudioList = (event, source, cover, singer, album) => {
     const actualCover = cover ? cover : event.thumbnail;
     if (source === 'youtube'){
         const musicSrc = event.musicSrc ? event.musicSrc : '/youtube/stream?videoId=' + event.videoId;
-        const key = event._id ? event._id : md5('/youtube/stream?videoId=' + event.videoId);
+        const key = md5(musicSrc);
         const actualSinger = singer ? singer : event.artist;
         audioList =
           {
@@ -77,7 +77,7 @@ const prepareAudioList = (event, source, cover, singer, album) => {
          }
     } else {
         const musicSrc = event.musicSrc ? event.musicSrc : '/bandcamp/stream?url=' + event.url;
-        const key = event._id ? event._id : md5(musicSrc);
+        const key = md5(musicSrc);
         const actualSinger = singer ? singer : event.artist;
         audioList =
           {
