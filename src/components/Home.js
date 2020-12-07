@@ -107,7 +107,7 @@ class Home extends React.Component {
                             <PlaylistAddIcon />
                           </Avatar>
                         </ListItemAvatar>
-                        <ListItemText primary="Listen to your favorite tracks and author playlists." />
+                        <ListItemText primary="Add tracks to the player." />
                       </ListItem>
                       <ListItem>
                         <ListItemAvatar>
@@ -115,7 +115,7 @@ class Home extends React.Component {
                             <SaveIcon />
                           </Avatar>
                         </ListItemAvatar>
-                        <ListItemText primary="Save your playlists." />
+                        <ListItemText primary="Create a playlist by saving the tracks queued in the player." />
                       </ListItem>
                       <ListItem>
                         <ListItemAvatar>
