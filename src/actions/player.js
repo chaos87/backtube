@@ -10,11 +10,13 @@ import { delay } from '../services/utils';
 import { streamingURL } from '../config/urls';
 import { sources } from '../config/sources';
 import md5 from 'md5';
+import { v4 as uuidv4 } from 'uuid';
 
-export function addSingleSong(event, source, cover, singer, album) {
+
+export function addSingleSong(event, source, cover, singer, album, index) {
   return async function(dispatch) {
       // before
-      await dispatch({type: PLAYER_ADD_SINGLE_SONG_BEFORE, source: source, payload: event});
+      await dispatch({type: PLAYER_ADD_SINGLE_SONG_BEFORE, index: index});
       // doing
       delay(100).then(res => {
           const audioList = prepareAudioList(event, source, cover, singer, album);
@@ -60,36 +62,22 @@ export function syncPlaylist(currentPlayId, audioLists, audioInfo) {
 const prepareAudioList = (event, source, cover, singer, album) => {
     let audioList = null;
     const actualCover = cover ? cover : event.thumbnail;
-    if (source === 'youtube'){
-        const musicSrc = event.musicSrc ? event.musicSrc : '/youtube/stream?videoId=' + event.videoId;
-        const key = md5(musicSrc);
-        const actualSinger = singer ? singer : event.artist;
-        audioList =
-          {
-            key: key,
-            name: event.title,
-            musicSrc: streamingURL + musicSrc,
-            source: "youtube",
-            cover: actualCover,
-            singer: actualSinger,
-            album: album,
-            duration: event.duration
-         }
-    } else {
-        const musicSrc = event.musicSrc ? event.musicSrc : '/bandcamp/stream?url=' + event.url;
-        const key = md5(musicSrc);
-        const actualSinger = singer ? singer : event.artist;
-        audioList =
-          {
-            key: key,
-            name: event.title,
-            musicSrc: streamingURL + musicSrc,
-            source: "bandcamp",
-            cover: actualCover,
-            singer: actualSinger,
-            album: album,
-            duration: event.duration
-         }
-    }
+    const actualSinger = singer ? singer : event.artist;
+    let key = uuidv4();
+    const musicSrc = (source === 'youtube' && 'videoId' in event)? '/youtube/stream?videoId=' + event.videoId + '&key=' + key
+                   : (source === 'bandcamp' && 'url' in event)? '/bandcamp/stream?url=' + event.url + '&key=' + key
+                   : event.musicSrc + '&key=' + key;
+    const id = md5(musicSrc.split('&')[0]);
+    audioList =
+      {
+        _id: id,
+        name: event.title,
+        musicSrc: streamingURL + musicSrc,
+        source: source,
+        cover: actualCover,
+        singer: actualSinger,
+        album: album,
+        duration: event.duration,
+     }
     return audioList;
 }

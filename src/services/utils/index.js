@@ -28,3 +28,20 @@ export const pad = (n, width, z) => {
 export const padArray = (arr,len,fill) => {
   return arr.concat(Array(len).fill(fill)).slice(0,len);
 }
+
+// eslint-disable-next-line no-extend-native
+Object.defineProperty(Array.prototype, 'shuffle', {
+    value: function() {
+        for (let i = this.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [this[i], this[j]] = [this[j], this[i]];
+        }
+        return this;
+    }
+});
+
+export const addMosaicToObject = (arr) => {
+  return Object.assign(arr, { mosaic: arr.tracks.filter(
+      (v,i,a)=>a.findIndex(t=>(t.thumbnail === v.thumbnail))===i
+  ).shuffle().slice(0, 4)});
+}

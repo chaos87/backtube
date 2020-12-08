@@ -81,8 +81,8 @@ class Playlist extends Component {
       const body = (
           <React.Fragment>
             <Grid container direction="row" className={classes.root} spacing={2}>
-               {this.props.tracks !== undefined && this.props.tracks.map(elem => (
-                         <Grid item xs={12} md={6} key={elem._id}>
+               {this.props.tracks !== undefined && this.props.tracks.map((elem, i) => (
+                         <Grid item xs={12} md={6} key={elem._id + i}>
                              <Card className={classes.cardClass}>
                                  <CardActionArea>
                                    <CardMedia
@@ -109,12 +109,12 @@ class Playlist extends Component {
                                      <Fab
                                          size="small"
                                          title="Add to player"
-                                         disabled={this.props.addLoading && elem._id === this.props.itemAddedId}
-                                         onClick={() => this.props.addToPlaylist(elem, this.props.source, elem.thumbnail, elem.artist, elem.album ? elem.album : this.props.title, false)}
+                                         disabled={this.props.addLoading && i === this.props.itemAddedId}
+                                         onClick={() => this.props.addToPlaylist(elem, this.props.source, elem.thumbnail, elem.artist, elem.album ? elem.album : this.props.title, i)}
                                          className={classes.fab}
                                      >
                                          <PlaylistAddIcon/>
-                                         {this.props.addLoading && elem._id === this.props.itemAddedId &&
+                                         {this.props.addLoading && i === this.props.itemAddedId &&
                                              <CircularProgress color="secondary" className={classes.fabProgress} />}
                                    </Fab>
                                    {this.props.source === "youtube" &&

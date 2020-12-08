@@ -1,4 +1,5 @@
 import { baseURL, streamingURL } from '../config/urls';
+import { addMosaicToObject } from '../services/utils';
 
 export const updatePlaylistApi = async (userInfo) => {
     const accessToken = userInfo.accessToken;
@@ -6,10 +7,10 @@ export const updatePlaylistApi = async (userInfo) => {
     const title = userInfo.title;
     const tracks = userInfo.playlist;
     const newTracks = tracks.map(
-        ({ key, name, musicSrc, source, singer, cover, album, duration  }) => (
+        ({ _id, name, musicSrc, source, singer, cover, album, duration  }) => (
             {
-                _id: key, title: name,
-                musicSrc: musicSrc.replace(streamingURL, ''),
+                _id: _id, title: name,
+                musicSrc: musicSrc.replace(streamingURL, '').split('&')[0],
                 source: source, artist: singer, thumbnail: cover, album: album, duration: duration
             }
         )
@@ -36,10 +37,10 @@ export const createPlaylistApi = async (userInfo) => {
     const title = userInfo.title;
     const tracks = userInfo.playlist;
     const newTracks = tracks.map(
-        ({ key, name, musicSrc, source, singer, cover, album, duration  }) => (
+        ({ _id, name, musicSrc, source, singer, cover, album, duration  }) => (
             {
-                _id: key, title: name,
-                musicSrc: musicSrc.replace(streamingURL, ''),
+                _id: _id, title: name,
+                musicSrc: musicSrc.replace(streamingURL, '').split('&')[0],
                 source: source, artist: singer, thumbnail: cover, album: album, duration: duration
             }
         )
@@ -74,6 +75,12 @@ export const getPlaylistsApi = async (userInfo) => {
     .then(res => {
         return res.json();
     })
+    .then(res => {
+        // Add field for covers mosaic
+        if (res) {
+            return res.map(el => addMosaicToObject(el))
+        } else { return res; }
+    })
     .catch(err => {
         return err
     })
@@ -85,6 +92,12 @@ export const getRecentPlaylistsApi = async () => {
     let playlists = await fetch(getUrl, { method: 'GET'})
     .then(res => {
         return res.json();
+    })
+    .then(res => {
+        // Add field for covers mosaic
+        if (res) {
+            return res.map(el => addMosaicToObject(el))
+        } else { return res; }
     })
     .catch(err => {
         return err

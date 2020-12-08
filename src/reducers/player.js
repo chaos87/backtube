@@ -19,7 +19,7 @@ export default function playerReducer(state = initialState, action) {
         return {
             ...state,
             addLoading: true,
-            itemAddedId: action.payload._id,
+            itemAddedId: action.index,
         };
     case PLAYER_ADD_SONG:
         return {

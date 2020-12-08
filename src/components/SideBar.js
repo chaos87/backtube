@@ -37,7 +37,6 @@ const styles = theme => ({
 class SideBar extends Component {
 
  handleClick = (item) => {
-      console.log(item)
         if (item === "Home") {
             this.props.history.push('/')
         }

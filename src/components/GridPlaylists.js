@@ -230,7 +230,7 @@ class GridPlaylists extends Component {
                                              title={elem.title}
                                          /> :
                                            <GridList cellHeight={120} className={classes.gridList} cols={2}>
-                                              {elem.tracks.filter((v,i,a)=>a.findIndex(t=>(t.thumbnail === v.thumbnail))===i).slice(0, 4).map(tile => (
+                                              {'mosaic' in elem && elem.mosaic.map(tile => (
                                                 <GridListTile key={tile._id} cols={1}>
                                                   <img src={tile.thumbnail} alt={tile.title} />
                                                 </GridListTile>
@@ -373,7 +373,7 @@ class GridPlaylists extends Component {
 
 function mapDispatchToProps(dispatch) {
   return {
-    addToPlaylist: (event, source, cover, singer, album) => dispatch(addSingleSong(event, source, cover, singer, album)),
+    addToPlaylist: (event, source, cover, singer, album, index) => dispatch(addSingleSong(event, source, cover, singer, album, index)),
     multiAddToPlaylist: (event, source, cover, singer) => dispatch(addMultipleSong(event, source, cover, singer)),
     addFollower: (playlistId, token) => dispatch(addFollower(playlistId, token)),
     removeFollower: (playlistId, token) => dispatch(removeFollower(playlistId, token)),
