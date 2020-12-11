@@ -10,7 +10,8 @@ import {
 const initialState = {
   addLoading: false,
   itemAddedId: "",
-  audioLists: []
+  audioLists: [],
+  clearPriorAudioLists: true,
 };
 
 export default function playerReducer(state = initialState, action) {
@@ -20,6 +21,7 @@ export default function playerReducer(state = initialState, action) {
             ...state,
             addLoading: true,
             itemAddedId: action.index,
+            clearPriorAudioLists: false
         };
     case PLAYER_ADD_SONG:
         return {
@@ -30,22 +32,25 @@ export default function playerReducer(state = initialState, action) {
         return {
             ...state,
             addLoading: false,
+            clearPriorAudioLists: true,
         };
     case PLAYER_ADD_MULTI_SONG_BEFORE:
         return {
             ...state,
             addLoading: true,
-            itemAddedId: action.payload._id
+            itemAddedId: action.payload._id,
+            clearPriorAudioLists: false
         };
     case PLAYER_ADD_MULTI_SONG_AFTER:
         return {
             ...state,
-            addLoading: false
+            addLoading: false,
+            clearPriorAudioLists: true
         };
     case PLAYER_SYNC_PLAYLIST:
         return {
             ...state,
-            audioLists: action.payload
+            audioLists: action.payload,
         };
     default:
       return state;

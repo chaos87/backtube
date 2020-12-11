@@ -58,7 +58,7 @@ class AppLayout extends React.Component {
       const { classes } = this.props;
       const initOptions = {
             //audio lists model
-            clearPriorAudioLists: true,
+            clearPriorAudioLists: this.props.clearPriorAudioLists,
             toggleMode: true,
             preload: false,
             autoPlay: true,
@@ -119,6 +119,7 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state, props) {
   return {
     audioLists: state.player.audioLists,
+    clearPriorAudioLists: state.player.clearPriorAudioLists,
     isSearching: state.search.isSearching,
     isLoggedIn: state.auth.isLoggedIn,
   };

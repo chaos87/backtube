@@ -4,7 +4,7 @@ import {
     PLAYER_ADD_SINGLE_SONG_AFTER,
     PLAYER_ADD_MULTI_SONG_BEFORE,
     PLAYER_ADD_MULTI_SONG_AFTER,
-    PLAYER_SYNC_PLAYLIST
+    PLAYER_SYNC_PLAYLIST,
 } from '../constants/actionTypes';
 import { delay } from '../services/utils';
 import { streamingURL } from '../config/urls';
