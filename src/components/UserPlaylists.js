@@ -78,6 +78,7 @@ class UserPlaylists extends React.Component {
 
     render() {
         const { classes } = this.props;
+        // console.log(this.props.owned)
         return(
             <TabPane
                 className={classes.panel}

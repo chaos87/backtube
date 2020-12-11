@@ -78,12 +78,17 @@ export const getPlaylistsApi = async (userInfo) => {
     .then(res => {
         // Add field for covers mosaic
         if (res) {
-            return res.map(el => addMosaicToObject(el))
+            return Object.assign(
+                res,
+                {playlistsOwned: res.playlistsOwned.map(el => addMosaicToObject(el))},
+                {playlistsFollowed: res.playlistsFollowed.map(el => addMosaicToObject(el))},
+            )
         } else { return res; }
     })
     .catch(err => {
         return err
     })
+
     return playlists;
 }
 

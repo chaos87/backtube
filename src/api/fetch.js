@@ -1,5 +1,6 @@
 import { baseURL, streamingURL, ytURL } from '../config/urls';
 import { pad } from '../services/utils';
+import { addMosaicToObject } from '../services/utils';
 
 export const makeYoutubeSearchApiCall = async searchInput => {
   const searchUrl = ytURL + `/search/yt`;
@@ -134,6 +135,12 @@ export const searchPlaylistsApi = async (userInfo) => {
     })
     .then(res => {
         return res.json();
+    })
+    .then(res => {
+        // Add field for covers mosaic
+        if (res) {
+            return res.map(el => addMosaicToObject(el))
+        } else { return res; }
     })
     .catch(err => {
         return err
