@@ -70,6 +70,7 @@ class Home extends React.Component {
     }
 
     render(){
+        console.log(process.env.REACT_APP_TEST)
         const { classes } = this.props;
         return (
             <div>

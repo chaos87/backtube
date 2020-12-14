@@ -9,6 +9,7 @@
     "clsx": "^1.1.1",
     "material-ui-search-bar": "^1.0.0",
     "md5": "^2.3.0",
+    "mixpanel-browser": "^2.40.0",
     "moment": "^2.29.0",
     "node-sass": "^4.14.1",
     "react": "^16.13.1",
