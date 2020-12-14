@@ -40,7 +40,7 @@ class Search extends React.Component {
     }
 
     fetchSongs = async () => {
-        const searchQuery = this.getSearchQuery().replace('&', '');
+        const searchQuery = this.getSearchQuery()
         this.props.startSearch();
         if (this.props.accessToken) {
             this.props.getPlaylistsIdAndTitle({

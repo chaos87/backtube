@@ -39,7 +39,7 @@ class AppLayout extends React.Component {
 
     handleSearch = async (event) => {
         if(event.key === 'Enter'){
-            const escapedSearchQuery = encodeURI(this.state.searchValue);
+            const escapedSearchQuery = encodeURIComponent(this.state.searchValue);
             this.props.history.push(`/results?search_query=${escapedSearchQuery}`);
         }
     };
