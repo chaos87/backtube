@@ -47,12 +47,18 @@ class AppLayout extends React.Component {
     handleOnChange = newValue => {
       this.setState({ searchValue: newValue });
     };
+
     handleOpenSideBar = event => {
         this.setState({open: true})
     };
+
     handleCloseSideBar = event => {
         this.setState({open: false})
     };
+
+    handleAudioError = event => {
+        console.log('NODE_ENV', process.env.NODE_ENV, event)
+    }
 
   render() {
       const { classes } = this.props;
@@ -102,6 +108,7 @@ class AppLayout extends React.Component {
                 className={classes.player}
                 audioLists={this.props.audioLists}
                 onAudioListsChange={this.props.syncPlaylist}
+                onAudioError={this.handleAudioError}
                 {...initOptions}
             />
           </div>
