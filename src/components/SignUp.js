@@ -17,6 +17,7 @@ import { ModalLink } from "react-router-modal-gallery";
 import { connect } from 'react-redux';
 import { registerUser } from '../actions/register';
 import { delay } from '../services/utils';
+import { MixPanel } from './MixPanel';
 
 const styles = theme => ({
   paper: {
@@ -75,6 +76,7 @@ class SignUp extends Component {
         this.setState({error: null})
         event.preventDefault();
         // API call to register
+        Date.now().toString()
         this.props.register({
             'username': 'user_' + Date.now().toString(),
             'email': this.state.email,
@@ -83,9 +85,16 @@ class SignUp extends Component {
         })
         .then(res => {
           if (this.props.reg.isRegistered) {
+              MixPanel.identify(this.props.reg.userSub);
+              MixPanel.people.set({
+                  username: this.props.reg.username,
+                  sign_up_date: Date.now().toString()
+              });
+              MixPanel.track('Successful signup');
               this.setState({signUpSuccessful: true});
               setTimeout(function () { this.props.history.push('/confirm'); }.bind(this), 1000);
           } else {
+            MixPanel.track('Unsuccessful signup');
             this.setState({hasError: true});
           }
         })
