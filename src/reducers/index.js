@@ -8,6 +8,7 @@ import playerReducer from './player';
 import searchReducer from './search';
 import profileReducer from './profile';
 import playlistReducer from './playlist';
+import resetReducer from './reset';
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
@@ -44,5 +45,6 @@ export default combineReducers({
   fetchBT: fetchBTreducer,
   player: persistReducer(playerPersistConfig, playerReducer),
   profile: persistReducer(profilePersistConfig, profileReducer),
-  playlist: playlistReducer
+  playlist: playlistReducer,
+  reset: resetReducer,
 })

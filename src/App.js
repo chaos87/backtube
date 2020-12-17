@@ -6,6 +6,8 @@ import Search from "./components/Search";
 import Profile from "./components/Profile";
 import Home from "./components/Home";
 import ConfirmRegistration from "./components/ConfirmRegistration";
+import ForgotPassword from "./components/ForgotPassword";
+import ResetPassword from "./components/ResetPassword";
 import UserPlaylists from "./components/UserPlaylists";
 import SavePlaylist from "./components/SavePlaylist";
 import DeletePlaylist from "./components/DeletePlaylist";
@@ -67,6 +69,18 @@ const routes = [
     modal: true,
     path: '/confirm',
     component: ConfirmRegistration
+  },
+  {
+    defaultParentPath: '/',
+    modal: true,
+    path: '/forgotPassword',
+    component: ForgotPassword
+  },
+  {
+    defaultParentPath: '/',
+    modal: true,
+    path: '/resetPassword',
+    component: ResetPassword
   },
   {
     path: '*',

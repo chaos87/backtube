@@ -12,7 +12,7 @@ import Alert from '@material-ui/lab/Alert';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import { Link, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import { ModalLink } from "react-router-modal-gallery";
 import { connect } from 'react-redux';
 import { loginUser } from '../actions/auth';
@@ -155,9 +155,9 @@ class SignIn extends Component {
                   </div>
                   <Grid container>
                     <Grid item xs>
-                      <Link to="/" variant="body2">
-                        Forgot password?
-                      </Link>
+                      <ModalLink to='/forgotPassword'>
+                        {"Forgot password?"}
+                      </ModalLink>
                     </Grid>
                     <Grid item>
                       <ModalLink to='/register'>

@@ -5,16 +5,14 @@ import { green } from '@material-ui/core/colors';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Alert from '@material-ui/lab/Alert';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
 import Container from '@material-ui/core/Container';
 import { withRouter } from "react-router-dom";
-import { connect } from 'react-redux';
-import { confirmUser, resendConfirmationCode } from '../actions/register';
-import { withLastLocation } from 'react-router-last-location';
+import { sendForgotPasswordEmail } from '../actions/reset';
 
 const styles = theme => ({
   paper: {
@@ -63,38 +61,25 @@ const styles = theme => ({
   }
 });
 
-class ConfirmRegistration extends Component {
+class ForgotPassword extends Component {
     constructor(props) {
         super(props)
         this.state = {
-          code : '',
+          email : '',
           hasError: false,
-          confirmSuccessful: false,
-          resendSuccessful: false
+          emailSentSuccessful: false
         };
     }
 
     handleSubmit = (event) => {
         event.preventDefault();
-        this.props.confirm(this.props.reg.username, this.state.code)
-        .then(res => {
-          if (!this.props.reg.isConfirmed) {
-              this.setState({ hasError: true });
-          } else {
-              this.setState({ confirmSuccessful: true })
-          }
-        })
-    };
-
-    handleResend = (event) => {
-        event.preventDefault();
-        this.props.resend(this.props.reg.username)
-        .then(res => {
-          if (!this.props.reg.isResent) {
-              this.setState({ hasError: true });
-          } else {
-              this.setState({ resendSuccessful: true });
-          }
+        this.props.forgotPassword(this.state.email).then(res => {
+            if (this.props.reset.isEmailSent) {
+                this.setState({ emailSentSuccessful: true });
+                setTimeout(function () { this.props.history.push('/resetPassword'); }.bind(this), 1000);
+            } else {
+                this.setState({ hasError: true })
+            }
         })
     };
 
@@ -107,35 +92,29 @@ class ConfirmRegistration extends Component {
 
     render(){
      const { classes } = this.props
-     const buttonSubmitClassname = clsx({[classes.buttonSuccess]: this.state.confirmSuccessful});
-     const buttonResendClassname = clsx({[classes.buttonSuccess]: this.state.resendSuccessful});
-     const alertErrorClassname = clsx({[classes.alert]: !this.state.hasError});
-     const alertSuccessClassname = clsx({[classes.alert]: !this.props.reg.isConfirmed});
+     const buttonSubmitClassname = clsx({[classes.buttonSuccess]: this.state.emailSentSuccessful});
      return (
         <Container component="main" maxWidth="xs">
           <CssBaseline />
           <div className={classes.paper}>
             <Avatar className={classes.avatar}>
-              <LockOutlinedIcon />
+              <VpnKeyIcon />
             </Avatar>
             <Typography component="h1" variant="h5" className={classes.title}>
-              Confirm Registration
+              Forgot Password?
             </Typography>
             <Typography component="h1" variant="subtitle1" align="justify" className={classes.subtitle}>
-              A verification code has been sent to your email address.
-              Please input it below.
+             Input your email address and hit the button to receive an email containing a confirmation code.
             </Typography>
-            <Alert severity="error" className={alertErrorClassname}>{this.props.reg.error}</Alert>
-            <Alert severity="success" className={alertSuccessClassname}>Congratulations! Your account is verified.
-                Please note you have to sign in if you want to access your account.</Alert>
             <form className={classes.form} noValidate>
               <TextField
+                error={this.state.hasError}
                 variant="outlined"
                 required
                 fullWidth
-                name="code"
-                label="Verification Code"
-                id="code"
+                name="email"
+                label="email"
+                id="email"
                 onChange={this.handleInputChange}
               />
               <div className={classes.wrapper}>
@@ -144,29 +123,15 @@ class ConfirmRegistration extends Component {
                     fullWidth
                     variant="contained"
                     color="primary"
-                    disabled={this.props.reg.isConfirmFetching}
+                    disabled={this.props.reset.isForgotFetching}
                     className={buttonSubmitClassname}
                     onClick={this.handleSubmit}
                   >
-                    Confirm
+                    CONTINUE
                   </Button>
-                  {this.props.reg.isConfirmFetching && <CircularProgress size={24} className={classes.buttonProgress} />}
+                  {this.props.reset.isForgotFetching && <CircularProgress size={24} className={classes.buttonProgress} />}
               </div>
               </form>
-              <div className={classes.wrapperResend}>
-                  <Button
-                    fullWidth
-                    variant="contained"
-                    color="default"
-                    disabled={this.props.reg.isResendFetching}
-                    className={buttonResendClassname}
-                    onClick={this.handleResend}
-                  >
-                    Resend confirmation code
-                  </Button>
-                  {this.props.reg.isResendFetching && <CircularProgress size={24} className={classes.buttonProgress} />}
-              </div>
-
           </div>
         </Container>
       );
@@ -175,15 +140,14 @@ class ConfirmRegistration extends Component {
 
 function mapStateToProps(state, props) {
   return {
-    reg: state.register
+    reset: state.reset
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    confirm: (username, code) => dispatch(confirmUser(username, code)),
-    resend: username => dispatch(resendConfirmationCode(username)),
+    forgotPassword: email => dispatch(sendForgotPasswordEmail(email)),
   };
 }
 
-export default withLastLocation(withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(styles, { withTheme: true })(ConfirmRegistration))));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(styles, { withTheme: true })(ForgotPassword)));
