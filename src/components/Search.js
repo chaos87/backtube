@@ -65,8 +65,9 @@ class Search extends React.Component {
         await this.props.endSearch();
         MixPanel.track('Search Song', {
             'Search Query': searchQuery,
-            'Youtube Results Count': this.props.youtube.length,
-            'Bandcamp Results Count': this.props.bandcamp.length,
+            'Youtube Albums Results Count': this.props.youtube.albums.length,
+            'Youtube Playlists Results Count': this.props.youtube.playlists.length,
+            'Bandcamp Albums Results Count': this.props.bandcamp.albums.length,
         });
     }
 
