@@ -90,15 +90,16 @@ class SignIn extends Component {
             });
             MixPanel.identify(this.props.auth.session.accessToken.payload.sub);
             MixPanel.people.set({
-                username: this.props.username,
-                user_id: this.props.auth.session.accessToken.payload.sub
+                $name: this.props.username,
+                $email: this.state.email,
+                $distinct_id: this.props.auth.session.accessToken.payload.sub
             });
-            MixPanel.track('Successful login');
+            MixPanel.track('Sign In');
             let location = this.props.lastLocation.pathname === '/login' ? '/' : this.props.lastLocation.pathname
             setTimeout(function () { this.props.history.push(location); }.bind(this), 1000);
         } else {
             this.setState({'hasError': true});
-            MixPanel.track('Unsuccessful login');
+            MixPanel.track('Error Sign In');
             if (this.props.auth.error === "User is not confirmed.") {
                 setTimeout(function () { this.props.history.push('/confirm'); }.bind(this), 1000);
 

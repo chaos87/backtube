@@ -24,6 +24,7 @@ import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 import { getPlaylistsIdAndTitle, updatePlaylist, createPlaylist } from '../actions/playlist';
 import { withLastLocation } from 'react-router-last-location';
+import { MixPanel } from './MixPanel';
 
 const styles = theme => ({
   paper: {
@@ -204,8 +205,21 @@ class SavePlaylist extends Component {
               playlist: this.props.playerList
           })
           .then(res => {
+              let playlistDate = new Date().toISOString();
               if (this.props.isSaved) {
                   console.log('Playlist created!')
+                  MixPanel.track('Create Playlist', {
+                      'Playlist Title': this.state.title,
+                      'Playlist ID': res._id,
+                      'Playlist Tracks': this.props.playerList
+                  });
+                  MixPanel.people.set({
+                      'Last Playlist Create': playlistDate
+                  });
+                  MixPanel.people.set_once({
+                      'First Playlist Create': playlistDate
+                  });
+                  MixPanel.people.increment('Total Playlist Create');
                   setTimeout(function () { this.props.history.push(this.props.lastLocation.pathname); }.bind(this), 1000);
               }
           })
@@ -219,6 +233,11 @@ class SavePlaylist extends Component {
           })
           .then(res => {
               if (this.props.isSaved) {
+                  MixPanel.track('Update Playlist', {
+                      'Playlist Title': this.state.updateTitle,
+                      'Playlist ID': res._id,
+                      'Playlist Tracks': this.props.playerList
+                  });
                   setTimeout(function () { this.props.history.push(this.props.lastLocation.pathname); }.bind(this), 1000);
               }
 

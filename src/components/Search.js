@@ -8,6 +8,7 @@ import { startSearch, endSearch } from '../actions/search';
 import { getPlaylistsIdAndTitle } from '../actions/playlist';
 import {getSearchParam} from '../services/url';
 import { withLastLocation } from 'react-router-last-location';
+import { MixPanel } from './MixPanel';
 
 const styles = theme => ({
   panel: {
@@ -61,7 +62,12 @@ class Search extends React.Component {
                 this.props.fetchBCsongs(searchQuery),
             ]);
         }
-        this.props.endSearch();
+        await this.props.endSearch();
+        MixPanel.track('Search Song', {
+            'Search Query': searchQuery,
+            'Youtube Results Count': this.props.youtube.length,
+            'Bandcamp Results Count': this.props.bandcamp.length,
+        });
     }
 
     render() {

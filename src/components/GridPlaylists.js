@@ -30,7 +30,7 @@ import Fab from '@material-ui/core/Fab';
 import Playlist from './Playlist';
 import { addSingleSong, addMultipleSong } from '../actions/player';
 import { getPlaylists, addFollower, removeFollower } from '../actions/playlist';
-
+import { MixPanel } from './MixPanel';
 
 const styles = theme => ({
     root: {
@@ -168,6 +168,11 @@ class GridPlaylists extends Component {
           this.props.accessToken
       ).then(res =>{
           console.log('Playlist followed')
+          MixPanel.track('Follow Playlist', {
+              'Playlist Title': event.title,
+              'Playlist ID': event._id,
+              'Playlist Creator ID': event.creator._id,
+          });
           this.props.getPlaylists({
               accessToken: this.props.accessToken,
               userSub: this.props.userid
@@ -187,6 +192,11 @@ class GridPlaylists extends Component {
           this.props.accessToken
       ).then(res =>{
           console.log('Playlist unfollowed')
+          MixPanel.track('Unfollow Playlist', {
+              'Playlist Title': event.title,
+              'Playlist ID': event._id,
+              'Playlist Creator ID': event.creator._id,
+          });
           this.props.getPlaylists({
               accessToken: this.props.accessToken,
               userSub: this.props.userid

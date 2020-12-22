@@ -10,6 +10,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { withRouter } from "react-router-dom";
 import QueueMusicIcon from '@material-ui/icons/QueueMusic';
 import HomeIcon from '@material-ui/icons/Home';
+import { MixPanel } from './MixPanel';
 
 const drawerWidth = 240;
 
@@ -44,6 +45,7 @@ class SideBar extends Component {
             this.props.history.push('/playlists')
         }
         if (item === "Give Feedback") {
+            MixPanel.track('View Give Feedback')
             window.open('https://forms.gle/NJNK7Y9JhXj8zWgL6');
         }
     }

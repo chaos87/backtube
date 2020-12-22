@@ -72,11 +72,15 @@ class SignUp extends Component {
         };
     }
 
+    componentDidMount() {
+        MixPanel.track('View Sign Up');
+    }
+
     handleSubmit = (event) => {
         this.setState({error: null})
         event.preventDefault();
         // API call to register
-        Date.now().toString()
+        let registerDate = new Date().toISOString();
         this.props.register({
             'username': 'user_' + Date.now().toString(),
             'email': this.state.email,
@@ -85,16 +89,19 @@ class SignUp extends Component {
         })
         .then(res => {
           if (this.props.reg.isRegistered) {
-              MixPanel.identify(this.props.reg.userSub);
+              MixPanel.alias(this.props.reg.userSub);
               MixPanel.people.set({
-                  username: this.props.reg.username,
-                  sign_up_date: Date.now().toString()
+                  $name: this.props.reg.username,
+                  $email: this.state.email,
+                  $distinct_id: this.props.reg.userSub,
+                  $created: registerDate,
+                  'Is Confirmed': false,
               });
-              MixPanel.track('Successful signup');
+              MixPanel.track('Sign Up');
               this.setState({signUpSuccessful: true});
               setTimeout(function () { this.props.history.push('/confirm'); }.bind(this), 1000);
           } else {
-            MixPanel.track('Unsuccessful signup');
+            MixPanel.track('Error Sign Up');
             this.setState({hasError: true});
           }
         })

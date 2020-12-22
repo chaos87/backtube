@@ -12,6 +12,7 @@ import {withStyles} from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import {withRouter} from 'react-router-dom';
 import { syncPlaylist } from '../actions/player';
+import { MixPanel } from './MixPanel';
 
 const styles = theme => ({
   player: {
@@ -57,7 +58,28 @@ class AppLayout extends React.Component {
     };
 
     handleAudioError = event => {
-        console.log('NODE_ENV', process.env.NODE_ENV, event)
+        console.log(event)
+    }
+
+    handleAudioEnded = (currentPlayId, audioLists, audioInfo) => {
+        let songPlayedDate = new Date().toISOString();
+        MixPanel.track('Play Song', {
+            'Song ID': audioInfo._id,
+            'Song Artist': audioInfo.singer,
+            'Song Album': audioInfo.album,
+            'Song Source': audioInfo.source,
+            'Song Cover': audioInfo.cover,
+            'Song URL': audioInfo.musicSrc,
+            'Song Duration': audioInfo.duration,
+            'Song Title': audioInfo.name,
+        });
+        MixPanel.people.set_once({
+            'First Song Play': songPlayedDate,
+        });
+        MixPanel.people.set({
+            'Last Song Play': songPlayedDate,
+        });
+        MixPanel.people.increment('Total Song Plays');
     }
 
   render() {
@@ -109,6 +131,7 @@ class AppLayout extends React.Component {
                 audioLists={this.props.audioLists}
                 onAudioListsChange={this.props.syncPlaylist}
                 onAudioError={this.handleAudioError}
+                onAudioEnded={this.handleAudioEnded}
                 {...initOptions}
             />
           </div>

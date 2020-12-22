@@ -13,6 +13,7 @@ import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import { updateProfile, readProfile } from '../actions/profile';
+import { MixPanel } from './MixPanel';
 
 const styles = theme => ({
   profile: {
@@ -95,9 +96,14 @@ class Profile extends React.Component {
         .then(res => {
           if (!this.props.isUpdated) {
             this.setState({hasError: true});
+            MixPanel.track('Error Update Profile');
           }
           else {
               this.setState({updateSuccessful: true});
+              MixPanel.track('Update Profile', {
+                  $name: this.state.username,
+                  $avatar: this.uploadInput.files[0],
+              });
           }
         })
     }
