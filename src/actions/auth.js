@@ -8,9 +8,17 @@ import {
     REFRESH_AUTH_TOKEN_SUCCESS,
     REFRESH_AUTH_TOKEN_FAILED,
 } from '../constants/actionTypes'
-import { login, refresh } from '../api/auth'
+import { login, refresh } from '../api/auth';
+import { MixPanel } from '../components/MixPanel';
 
-export const clearSession = () => ({
+export function clearSession() {
+    return function (dispatch) {
+        MixPanel.reset();
+        return dispatch(doClearSession())
+    }
+}
+
+export const doClearSession = () => ({
   type: CLEAR_SESSION
 })
 
