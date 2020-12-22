@@ -13,6 +13,7 @@ import Container from '@material-ui/core/Container';
 import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 import { getPlaylistsIdAndTitle, deletePlaylist } from '../actions/playlist';
+import { MixPanel } from './MixPanel';
 
 const styles = theme => ({
   paper: {
@@ -77,6 +78,11 @@ class DeletePlaylist extends Component {
       .then(res => {
           if (this.props.isDeleted) {
               console.log('Playlist deleted!')
+              MixPanel.track('Delete Playlist', {
+                  'Playlist Title': this.props.playlists.filter(el => el._id === this.props.match.params.id)[0] ?
+                       this.props.playlists.filter(el => el._id === this.props.match.params.id)[0].title: '',
+                  'Playlist ID': res._id
+              });
               setTimeout(function () { this.props.history.push('/playlists'); }.bind(this), 1000);
           }
       })

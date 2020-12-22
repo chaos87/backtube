@@ -18,6 +18,7 @@ import { connect } from 'react-redux';
 import { loginUser } from '../actions/auth';
 import { readProfile } from '../actions/profile';
 import { withLastLocation } from 'react-router-last-location';
+import { MixPanel } from './MixPanel';
 
 const styles = theme => ({
   paper: {
@@ -87,10 +88,18 @@ class SignIn extends Component {
                 accessToken: this.props.auth.session.accessToken.jwtToken,
                 userSub: this.props.auth.session.accessToken.payload.sub
             });
+            MixPanel.identify(this.props.auth.session.accessToken.payload.sub);
+            MixPanel.people.set({
+                $name: this.props.username,
+                $email: this.state.email,
+                $distinct_id: this.props.auth.session.accessToken.payload.sub
+            });
+            MixPanel.track('Sign In');
             let location = this.props.lastLocation.pathname === '/login' ? '/' : this.props.lastLocation.pathname
             setTimeout(function () { this.props.history.push(location); }.bind(this), 1000);
         } else {
             this.setState({'hasError': true});
+            MixPanel.track('Error Sign In');
             if (this.props.auth.error === "User is not confirmed.") {
                 setTimeout(function () { this.props.history.push('/confirm'); }.bind(this), 1000);
 
@@ -174,7 +183,8 @@ class SignIn extends Component {
 
 function mapStateToProps(state, props) {
   return {
-    auth: state.auth
+    auth: state.auth,
+    username: state.profile.username !== undefined ? state.profile.username: "",
   };
 }
 

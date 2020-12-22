@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import Container from '@material-ui/core/Container';
 import { withRouter } from "react-router-dom";
 import { sendForgotPasswordEmail } from '../actions/reset';
+import { MixPanel } from './MixPanel';
 
 const styles = theme => ({
   paper: {
@@ -69,6 +70,10 @@ class ForgotPassword extends Component {
           hasError: false,
           emailSentSuccessful: false
         };
+    }
+
+    componentDidMount() {
+        MixPanel.track('View Forgot Password');
     }
 
     handleSubmit = (event) => {

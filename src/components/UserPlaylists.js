@@ -6,6 +6,7 @@ import {withRouter} from 'react-router-dom';
 import { getPlaylists } from '../actions/playlist';
 import { startSearch, endSearch } from '../actions/search';
 import { withLastLocation } from 'react-router-last-location';
+import { MixPanel } from './MixPanel';
 
 const styles = theme => ({
   panel: {
@@ -73,12 +74,15 @@ class UserPlaylists extends React.Component {
             accessToken: this.props.accessToken,
             userSub: this.props.userid
         });
+        MixPanel.track('View My Playlists', {
+            'Total Playlist Owned': this.props.owned.length,
+            'Total Playlist Followed': this.props.followed.length,
+        })
         this.props.endSearch();
     }
 
     render() {
         const { classes } = this.props;
-        // console.log(this.props.owned)
         return(
             <TabPane
                 className={classes.panel}

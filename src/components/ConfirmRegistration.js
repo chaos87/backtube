@@ -15,6 +15,7 @@ import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 import { confirmUser, resendConfirmationCode } from '../actions/register';
 import { withLastLocation } from 'react-router-last-location';
+import { MixPanel } from './MixPanel';
 
 const styles = theme => ({
   paper: {
@@ -79,9 +80,16 @@ class ConfirmRegistration extends Component {
         this.props.confirm(this.props.reg.username, this.state.code)
         .then(res => {
           if (!this.props.reg.isConfirmed) {
-              this.setState({ hasError: true });
+              this.setState({'hasError': true});
+              MixPanel.track('Error Confirm');
           } else {
               this.setState({ confirmSuccessful: true })
+              let confirmedDate = new Date().toISOString();
+              MixPanel.people.set({
+                  'Confirmed Date': confirmedDate,
+                  'Is Confirmed': true,
+              });
+              MixPanel.track('Confirm');
           }
         })
     };

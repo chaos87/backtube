@@ -11,6 +11,7 @@ import { streamingURL } from '../config/urls';
 import { sources } from '../config/sources';
 import md5 from 'md5';
 import { v4 as uuidv4 } from 'uuid';
+import { MixPanel } from '../components/MixPanel';
 
 
 export function addSingleSong(event, source, cover, singer, album, index) {
@@ -36,6 +37,14 @@ export function addMultipleSong(event, source, cover, singer) {
         // doing
         const items = event.tracks
         const promises = [];
+        if (source === 'backtube') {
+            MixPanel.track('Queue Playlist', {
+                'Playlist ID': event._id,
+                'Playlist Title': event.title,
+                'Playlist Creator ID': event.creator._id,
+                'Playlist Tracks': event.tracks,
+            })
+        }
         for (let i = 0; i < items.length; i++) {
             let actualSource = sources.indexOf(source) > -1 ? source : items[i].source;
             let album = items[i].album ? items[i].album : event.title
