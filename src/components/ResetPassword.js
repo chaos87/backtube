@@ -16,6 +16,7 @@ import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 import { resetUserPassword } from '../actions/reset';
 import { delay } from '../services/utils';
+import { MixPanel } from './MixPanel';
 
 const styles = theme => ({
   paper: {
@@ -70,6 +71,10 @@ class ResetPassword extends Component {
         };
     }
 
+    componentDidMount() {
+        MixPanel.track('View Reset Password');
+    }
+
     handleSubmit = (event) => {
         this.setState({error: null})
         event.preventDefault();
@@ -82,8 +87,10 @@ class ResetPassword extends Component {
         .then(res => {
           if (this.props.reset.isPasswordReset) {
               this.setState({ resetSuccessful: true });
+              MixPanel.track('Confirm Reset Password');
           } else {
             this.setState({ hasError: true });
+             MixPanel.track('Error Confirm Reset Password');
             console.log(res)
           }
         })
