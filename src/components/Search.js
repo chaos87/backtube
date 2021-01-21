@@ -4,10 +4,11 @@ import {withStyles} from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import {withRouter} from 'react-router-dom';
 import { fetchYTsongs, fetchBCsongs, fetchBTsongs } from '../actions/fetch';
-import { startSearch, endSearch } from '../actions/search';
-import { getPlaylistsIdAndTitle } from '../actions/playlist';
+import { startSearch, endSearch, enableSearch } from '../actions/search';
+import { getPlaylists } from '../actions/playlist';
 import {getSearchParam} from '../services/url';
 import { withLastLocation } from 'react-router-last-location';
+import { resetTabs } from '../actions/nav';
 import { MixPanel } from './MixPanel';
 
 const styles = theme => ({
@@ -28,14 +29,20 @@ class Search extends React.Component {
           return;
         }
         // if coming from login or register, dont fire search
-        this.fetchSongs();
+        if (this.props.refreshSearch){
+            this.props.resetTabs();
+            this.fetchSongs();
+        } else {
+            this.props.enableSearch();
+        }
     }
 
     componentDidUpdate(prevProps) {
       if (prevProps.location !== this.props.location
           && this.props.lastLocation.pathname !== "/login"
           && this.props.lastLocation.pathname !==  "/register"
-          && this.props.lastLocation.pathname !==  "/savePlaylist") {
+          && this.props.lastLocation.pathname !==  "/savePlaylist"
+          && this.props.refreshSearch) {
         this.fetchSongs();
       }
     }
@@ -44,7 +51,7 @@ class Search extends React.Component {
         const searchQuery = this.getSearchQuery()
         this.props.startSearch();
         if (this.props.accessToken) {
-            this.props.getPlaylistsIdAndTitle({
+            this.props.getPlaylists({
                 accessToken: this.props.accessToken,
                 userSub: this.props.userid
             });
@@ -65,9 +72,6 @@ class Search extends React.Component {
         await this.props.endSearch();
         MixPanel.track('Search Song', {
             'Search Query': searchQuery,
-            'Youtube Albums Results Count': this.props.youtube.albums.length,
-            'Youtube Playlists Results Count': this.props.youtube.playlists.length,
-            'Bandcamp Albums Results Count': this.props.bandcamp.albums.length,
         });
     }
 
@@ -124,7 +128,9 @@ function mapDispatchToProps(dispatch) {
     fetchBTsongs: searchQuery => dispatch(fetchBTsongs(searchQuery)),
     startSearch: () => dispatch(startSearch()),
     endSearch: () => dispatch(endSearch()),
-    getPlaylistsIdAndTitle: (userInfo) => dispatch(getPlaylistsIdAndTitle(userInfo)),
+    getPlaylists: (userInfo) => dispatch(getPlaylists(userInfo)),
+    enableSearch: () => dispatch(enableSearch()),
+    resetTabs: () => dispatch(resetTabs()),
   };
 }
 
@@ -139,6 +145,7 @@ function mapStateToProps(state, props) {
     accessToken: state.auth.session !== null ? state.auth.session.accessToken.jwtToken: null,
     userid: state.auth.session !== null ? state.auth.session.accessToken.payload.sub: null,
     followed: state.playlist.playlistsFollowedIdTitle ? state.playlist.playlistsFollowedIdTitle: [],
+    refreshSearch: state.search.refreshSearch,
   };
 }
 

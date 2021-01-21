@@ -374,8 +374,8 @@ function mapStateToProps(state, props) {
 function mapDispatchToProps(dispatch) {
   return {
     getPlaylistsIdAndTitle: (userInfo) => dispatch(getPlaylistsIdAndTitle(userInfo)),
-    updatePlaylist: (id, playlist) => dispatch(updatePlaylist(id, playlist)),
-    createPlaylist: (title, playlist) => dispatch(createPlaylist(title, playlist)),
+    updatePlaylist: (playlistInfo) => dispatch(updatePlaylist(playlistInfo)),
+    createPlaylist: (playlistInfo) => dispatch(createPlaylist(playlistInfo)),
   };
 }
 

@@ -19,4 +19,15 @@ const theme = createMuiTheme({
   },
 });
 
+Object.assign(theme, {
+    overrides: {
+        MUIRichTextEditor: {
+            anchorLink: {
+                color: '#31c27c',
+            },
+
+        }
+    }
+})
+
 export default theme;

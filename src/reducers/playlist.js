@@ -2,9 +2,6 @@ import {
     PLAYLIST_GET_STARTED,
     PLAYLIST_GET_FAILED,
     PLAYLIST_GET_SUCCESS,
-    PLAYLIST_GET_ID_STARTED,
-    PLAYLIST_GET_ID_FAILED,
-    PLAYLIST_GET_ID_SUCCESS,
     PLAYLIST_UPDATE_STARTED,
     PLAYLIST_UPDATE_FAILED,
     PLAYLIST_UPDATE_SUCCESS,
@@ -20,13 +17,21 @@ import {
     PLAYLIST_GET_RECENT_STARTED,
     PLAYLIST_GET_RECENT_SUCCESS,
     PLAYLIST_GET_RECENT_FAILED,
+    PLAYLIST_GET_CURRENT_STARTED,
+    PLAYLIST_GET_CURRENT_SUCCESS,
+    PLAYLIST_GET_CURRENT_FAILED,
     PLAYLIST_CLEAR,
-
+    PLAYLIST_CURRENT_REFRESH,
+    PLAYLIST_CURRENT_NO_REFRESH,
+    PLAYLIST_CURRENT_SET,
+    PLAYLIST_RESET_MUST_RELOAD,
+    PLAYLIST_MUST_RELOAD
 } from '../constants/actionTypes'
 
 const initialState = {
   isFetching: false,
   isFetchingRecent: false,
+  isFetchingCurrent: false,
   isSaving: false,
   isDeleting: false,
   isSaved: false,
@@ -34,6 +39,8 @@ const initialState = {
   isFollowing: false,
   playlistFollowing: null,
   error: null,
+  refreshCurrent: true,
+  mustReload: false
 }
 
 const playlistReducer = (state = initialState, action) => {
@@ -79,25 +86,6 @@ const playlistReducer = (state = initialState, action) => {
         return {
           ...state,
           isFetching: false,
-          error: action.payload.error,
-        }
-    case PLAYLIST_GET_ID_STARTED:
-        return {
-            ...state,
-            isSaved: false,
-            isDeleted: false,
-            error: null,
-        }
-    case PLAYLIST_GET_ID_SUCCESS:
-        return {
-            ...state,
-            error: null,
-            playlistsOwnedIdTitle: action.payload.playlistsOwned,
-            playlistsFollowedIdTitle: action.payload.playlistsFollowed
-        }
-    case PLAYLIST_GET_ID_FAILED:
-        return {
-          ...state,
           error: action.payload.error,
         }
     case PLAYLIST_CREATE_STARTED:
@@ -157,7 +145,6 @@ const playlistReducer = (state = initialState, action) => {
             error: null,
             isFollowing: false,
             playlistFollowing: null,
-            playlistsFollowedIdTitle: action.payload.playlistsFollowed
         }
     case PLAYLIST_FOLLOW_FAILED:
         return {
@@ -185,14 +172,46 @@ const playlistReducer = (state = initialState, action) => {
           isFetchingRecent: false,
           error: action.payload.error,
         }
+    case PLAYLIST_GET_CURRENT_STARTED:
+        return {
+            ...state,
+            error: null,
+            isFetchingCurrent: true,
+        }
+    case PLAYLIST_GET_CURRENT_SUCCESS:
+        return {
+            ...state,
+            error: null,
+            isFetchingCurrent: false,
+            playlistCurrent: action.payload
+        }
+    case PLAYLIST_GET_CURRENT_FAILED:
+        return {
+          ...state,
+          isFetchingCurrent: false,
+          error: action.payload.error,
+        }
     case PLAYLIST_CLEAR:
         return {
           ...state,
-          playlistsFollowedIdTitle: [],
-          playlistsOwnedIdTitle: [],
           playlistsFollowed: [],
           playlistsOwned: [],
         }
+    case PLAYLIST_CURRENT_NO_REFRESH:
+        return { ...state, refreshCurrent: false }
+
+    case PLAYLIST_CURRENT_REFRESH:
+        return { ...state, refreshCurrent: true }
+
+    case PLAYLIST_CURRENT_SET:
+        return { ...state, playlistCurrent: action.payload }
+
+    case PLAYLIST_MUST_RELOAD:
+        return { ...state, mustReload: true }
+
+    case PLAYLIST_RESET_MUST_RELOAD:
+        return { ...state, mustReload: false }
+
     default:
       return state
   }

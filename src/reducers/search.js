@@ -1,7 +1,8 @@
-import { SEARCH_START, SEARCH_END } from '../constants/actionTypes'
+import { SEARCH_START, SEARCH_END, SEARCH_NO_REFRESH, SEARCH_REFRESH } from '../constants/actionTypes'
 
 const initialState = {
-  isSearching: false
+  isSearching: false,
+  refreshSearch: true,
 }
 
 const searchReducer = (state = initialState, action) => {
@@ -11,6 +12,12 @@ const searchReducer = (state = initialState, action) => {
 
     case SEARCH_END:
       return { ...state, isSearching: false }
+
+    case SEARCH_NO_REFRESH:
+      return { ...state, refreshSearch: false }
+
+    case SEARCH_REFRESH:
+      return { ...state, refreshSearch: true }
 
     default:
       return state

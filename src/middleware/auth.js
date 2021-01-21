@@ -10,7 +10,7 @@ export function jwtMiddleware({ dispatch, getState }) {
        if (getState().auth && getState().auth.session) {
          const tokenExpiration = getState().auth.session.accessToken.payload.exp;
          const tokenExpirationTimeInSeconds = (tokenExpiration - moment(Math.floor(Date.now() / 1000)));
-         if (tokenExpiration && tokenExpirationTimeInSeconds < 20) {
+         if (tokenExpiration && tokenExpirationTimeInSeconds < 300) {
            console.log("Clearing Session...")
            dispatch(clearPlaylists());
            return dispatch(clearSession());
@@ -21,7 +21,7 @@ export function jwtMiddleware({ dispatch, getState }) {
        if (getState().auth && getState().auth.session) {
          const tokenExpiration = getState().auth.session.accessToken.payload.exp;
          const tokenExpirationTimeInSeconds = (tokenExpiration - moment(Math.floor(Date.now() / 1000)));
-         if (tokenExpiration && tokenExpirationTimeInSeconds < 300 && tokenExpirationTimeInSeconds > 20) {
+         if (tokenExpiration && tokenExpirationTimeInSeconds < 3600 && tokenExpirationTimeInSeconds >= 300) {
            if (!getState().auth.fetching) {
              console.log("Refreshing Session...")
              const refreshToken = getState().auth.session.refreshToken.token;

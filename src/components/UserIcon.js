@@ -50,7 +50,7 @@ class UserIcon extends Component {
 
     goToProfile = () => {
       this.setState({anchorEl: null});
-      this.props.history.push('/profile');
+      this.props.history.push(`/profile/${this.props.userid}`);
     };
 
     handleLogout = () => {
@@ -60,38 +60,25 @@ class UserIcon extends Component {
     render () {
         const { classes } = this.props;
         if (!this.props.isLoggedIn) {
-            if (!this.props.isSearching) {
-                return <ModalLink to='/login' className={classes.accountButtonClass}>
-                  <Button
-                      variant="outlined"
-                      color="secondary"
-                      disabled={false}
-                   >
-                      Sign In
-                    </Button>
-                </ModalLink>
-            }
-            else {
-                return <Button
-                    variant="outlined"
-                    color="secondary"
-                    className={classes.accountButtonClass}
-                    disabled={true}
-                 >
-                    Sign In
-                  </Button>
-            }
+            return <ModalLink to='/login' className={classes.accountButtonClass}>
+              <Button
+                  variant="outlined"
+                  color="secondary"
+                  disabled={false}
+               >
+                  Sign In
+                </Button>
+            </ModalLink>
         }
         else {
             return <div className={classes.wrapper}>
             <IconButton
-                disabled={this.props.isSearching}
                 className={classes.accountIconClass}
                 onClick={this.handleClick}
             >
               <Avatar
-                alt={this.props.username.toUpperCase()}
-                src={this.props.urlAvatar}
+                alt={this.props.profile.username.toUpperCase()}
+                src={this.props.profile.avatar}
                 aria-label="open account menu"
               >
             </Avatar>
@@ -113,8 +100,8 @@ class UserIcon extends Component {
 
 function mapStateToProps(state, props) {
   return {
-    username: state.profile.username ? state.profile.username : "",
-    urlAvatar: state.profile.urlAvatar ? state.profile.urlAvatar : "/broken-image.jpg",
+    profile: state.profile.profile !== null ? state.profile.profile : {username: "", avatar: "/broken-image.jpg"},
+    userid: state.auth.session !== null ? state.auth.session.accessToken.payload.sub: null,
     isSearching: state.search.isSearching
   };
 }

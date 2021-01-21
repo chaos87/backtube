@@ -47,7 +47,7 @@ const styles = theme => ({
     },
   },
   inputRoot: {
-    padding: theme.spacing(1, 1, 1, 0),
+    padding: theme.spacing(1),
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
     "&:hover": {   // this works
      backgroundColor: 'rgba(255, 255, 255, 0.25)',
@@ -66,6 +66,12 @@ const styles = theme => ({
     marginLeft: 'auto',
     textDecoration: 'none'
   },
+  bar: {
+      [theme.breakpoints.down('sm')]: {
+          paddingTop: theme.spacing(0.5),
+          paddingBottom: theme.spacing(0.5),
+      }
+  }
 });
 
 
@@ -73,14 +79,13 @@ class Header extends Component {
     render() {
         const { classes } = this.props;
         return (
-            <AppBar position="sticky">
+            <AppBar position="sticky" className={classes.bar}>
                 <Toolbar>
                     <IconButton
                         edge="start"
                         className={classes.menuButton}
                         color="inherit"
                         aria-label="open drawer"
-                        disabled={this.props.isSearching}
                         onClick={this.props.openSideBar}
                       >
                         <MenuIcon />
@@ -116,6 +121,7 @@ class Header extends Component {
                 <UserIcon
                     isSearching={this.props.isSearching}
                     isLoggedIn={this.props.isLoggedIn}
+                    className={classes.accountButton}
                 />
                 </Toolbar>
             </AppBar>

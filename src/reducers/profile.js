@@ -4,15 +4,19 @@ import {
     PROFILE_UPDATE_SUCCESS,
     PROFILE_READ_STARTED,
     PROFILE_READ_FAILED,
-    PROFILE_READ_SUCCESS
+    PROFILE_READ_SUCCESS,
+    PROFILE_GET_CURRENT_STARTED,
+    PROFILE_GET_CURRENT_FAILED,
+    PROFILE_GET_CURRENT_SUCCESS
 } from '../constants/actionTypes'
 
 const initialState = {
   isFetching: false,
+  isSaving: false,
   isUpdated: false,
   error: null,
-  username: null,
-  urlAvatar: null
+  profile: null,
+  profileCurrent: null,
 }
 
 const profileReducer = (state = initialState, action) => {
@@ -20,23 +24,21 @@ const profileReducer = (state = initialState, action) => {
     case PROFILE_UPDATE_STARTED:
       return {
           ...state,
-          isFetching: true,
+          isSaving: true,
           isUpdated: false,
           error: null
       }
     case PROFILE_UPDATE_SUCCESS:
       return {
           ...state,
-          isFetching: false,
+          isSaving: false,
           error: null,
           isUpdated: true,
-          urlAvatar: action.payload.url,
-          username: action.payload.username
       }
     case PROFILE_UPDATE_FAILED:
       return {
         ...state,
-        isFetching: false,
+        isSaving: false,
         isUpdated: false,
         error: action.payload.error,
       }
@@ -52,10 +54,29 @@ const profileReducer = (state = initialState, action) => {
             ...state,
             isFetching: false,
             error: null,
-            urlAvatar: action.payload.url,
-            username: action.payload.username
+            profile: action.payload
         }
     case PROFILE_READ_FAILED:
+        return {
+          ...state,
+          isFetching: false,
+          error: action.payload.error,
+        }
+    case PROFILE_GET_CURRENT_STARTED:
+        return {
+            ...state,
+            isFetching: true,
+            isUpdated: false,
+            error: null,
+        }
+    case PROFILE_GET_CURRENT_SUCCESS:
+        return {
+            ...state,
+            isFetching: false,
+            error: null,
+            profileCurrent: action.payload
+        }
+    case PROFILE_GET_CURRENT_FAILED:
         return {
           ...state,
           isFetching: false,

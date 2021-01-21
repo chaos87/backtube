@@ -4,9 +4,12 @@ import {
     PROFILE_UPDATE_SUCCESS,
     PROFILE_READ_STARTED,
     PROFILE_READ_FAILED,
-    PROFILE_READ_SUCCESS
+    PROFILE_READ_SUCCESS,
+    PROFILE_GET_CURRENT_STARTED,
+    PROFILE_GET_CURRENT_FAILED,
+    PROFILE_GET_CURRENT_SUCCESS
 } from '../constants/actionTypes';
-import { updateProfileApi, readProfileApi } from '../api/profile';
+import { updateProfileApi, readProfileApi, getCurrentProfileApi } from '../api/profile';
 import { checkAuth, refreshAuthTokenStarted } from './auth';
 
 
@@ -17,7 +20,7 @@ export function readProfile(userInfo) {
     dispatch(readProfileStarted())
     return readProfileApi(userInfo)
       .then(data => {
-          dispatch(readProfileSuccess(data.username, data.avatar));
+          dispatch(readProfileSuccess(data));
       })
       .catch(err => {
           dispatch(readProfileFailed(err.message));
@@ -33,7 +36,7 @@ export function updateProfile(profileInfo) {
     dispatch(updateProfileStarted())
     return updateProfileApi(profileInfo)
       .then(data => {
-          dispatch(updateProfileSuccess(data.username, data.url));
+          dispatch(updateProfileSuccess(data));
       })
       .catch(err => {
           dispatch(updateProfileFailed(err.message));
@@ -41,12 +44,9 @@ export function updateProfile(profileInfo) {
   }
 }
 
-const updateProfileSuccess = (username, url) => ({
+const updateProfileSuccess = (data) => ({
   type: PROFILE_UPDATE_SUCCESS,
-  payload: {
-      url,
-      username
-  }
+  payload: data
 });
 
 const updateProfileStarted = () => ({
@@ -60,12 +60,9 @@ const updateProfileFailed = error => ({
   }
 });
 
-const readProfileSuccess = (username, url) => ({
+const readProfileSuccess = (data) => ({
   type: PROFILE_READ_SUCCESS,
-  payload: {
-      url,
-      username
-  }
+  payload: data
 });
 
 const readProfileStarted = () => ({
@@ -74,6 +71,35 @@ const readProfileStarted = () => ({
 
 const readProfileFailed = error => ({
   type: PROFILE_READ_FAILED,
+  payload: {
+    error
+  }
+});
+
+export function getCurrentProfile(userInfo) {
+  return function(dispatch) {
+    dispatch(getCurrentProfileStarted())
+    return getCurrentProfileApi(userInfo)
+      .then(data => {
+          dispatch(getCurrentProfileSuccess(data));
+      })
+      .catch(err => {
+          dispatch(getCurrentProfileFailed(err.message));
+      });
+  }
+}
+
+const getCurrentProfileSuccess = (data) => ({
+  type: PROFILE_GET_CURRENT_SUCCESS,
+  payload: data
+});
+
+const getCurrentProfileStarted = () => ({
+  type: PROFILE_GET_CURRENT_STARTED
+});
+
+const getCurrentProfileFailed = error => ({
+  type: PROFILE_GET_CURRENT_FAILED,
   payload: {
     error
   }

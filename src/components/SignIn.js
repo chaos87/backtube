@@ -17,6 +17,7 @@ import { ModalLink } from "react-router-modal-gallery";
 import { connect } from 'react-redux';
 import { loginUser } from '../actions/auth';
 import { readProfile } from '../actions/profile';
+import { getPlaylists } from '../actions/playlist';
 import { withLastLocation } from 'react-router-last-location';
 import { MixPanel } from './MixPanel';
 
@@ -88,15 +89,18 @@ class SignIn extends Component {
                 accessToken: this.props.auth.session.accessToken.jwtToken,
                 userSub: this.props.auth.session.accessToken.payload.sub
             });
+            this.props.getPlaylists({
+                accessToken: this.props.auth.session.accessToken.jwtToken,
+                userSub: this.props.auth.session.accessToken.payload.sub
+            });
             MixPanel.identify(this.props.auth.session.accessToken.payload.sub);
             MixPanel.people.set({
-                $name: this.props.username,
+                $name: this.props.profile.username,
                 $email: this.state.email,
                 $distinct_id: this.props.auth.session.accessToken.payload.sub
             });
             MixPanel.track('Sign In');
-            let location = this.props.lastLocation.pathname === '/login' ? '/' : this.props.lastLocation.pathname
-            setTimeout(function () { this.props.history.push(location); }.bind(this), 1000);
+            setTimeout(function () { this.props.history.goBack(); }.bind(this), 1000);
         } else {
             this.setState({'hasError': true});
             MixPanel.track('Error Sign In');
@@ -184,14 +188,15 @@ class SignIn extends Component {
 function mapStateToProps(state, props) {
   return {
     auth: state.auth,
-    username: state.profile.username !== undefined ? state.profile.username: "",
+    profile: state.profile.profile !== null ? state.profile.profile : {username: "", avatar: "/broken-image.jpg"},
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     login: (username, password) => dispatch(loginUser(username, password)),
-    read: userInfo => dispatch(readProfile(userInfo))
+    read: userInfo => dispatch(readProfile(userInfo)),
+    getPlaylists: (userInfo) => dispatch(getPlaylists(userInfo)),
   };
 }
 

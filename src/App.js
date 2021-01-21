@@ -4,12 +4,14 @@ import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import Search from "./components/Search";
 import Profile from "./components/Profile";
+import PlaylistPage from "./components/PlaylistPage";
+import ThemePage from "./components/ThemePage";
+import TrackPage from "./components/TrackPage";
 import Home from "./components/Home";
 import ConfirmRegistration from "./components/ConfirmRegistration";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
-import UserPlaylists from "./components/UserPlaylists";
-import SavePlaylist from "./components/SavePlaylist";
+import UserLibrary from "./components/UserLibrary";
 import DeletePlaylist from "./components/DeletePlaylist";
 import MuiModal from "./components/MuiModal";
 import {Route, withRouter, Redirect} from 'react-router-dom';
@@ -25,24 +27,32 @@ const routes = [
   },
   {
     exact: true,
-    path: '/profile',
+    path: '/profile/:id',
     component: Profile,
-    private: true
   },
   {
     exact: true,
-    path: '/playlists',
-    component: UserPlaylists,
+    path: '/playlist/:id',
+    component: PlaylistPage
+  },
+  {
+    exact: true,
+    path: '/track/:id',
+    component: TrackPage
+  },
+  {
+    exact: true,
+    path: '/theme/:id',
+    component: ThemePage
+  },
+  {
+    exact: true,
+    path: '/library',
+    component: UserLibrary,
     private: true
   },
   {
-    defaultParentPath: '/playlists',
-    modal: true,
-    path: '/savePlaylist',
-    component: SavePlaylist
-  },
-  {
-    defaultParentPath: '/playlists',
+    defaultParentPath: '/library',
     modal: true,
     path: '/deletePlaylist/:id',
     component: DeletePlaylist

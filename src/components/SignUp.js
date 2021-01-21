@@ -152,6 +152,7 @@ class SignUp extends Component {
                     id="email"
                     label="Email Address"
                     name="email"
+                    inputProps={{ maxLength: 160 }}
                     autoComplete="email"
                     onChange={this.handleInputChange}
                   />
@@ -166,6 +167,7 @@ class SignUp extends Component {
                     label="Password"
                     type="password"
                     id="password"
+                    inputProps={{ maxLength: 160 }}
                     autoComplete="current-password"
                     onChange={this.handleInputChange}
                   />
@@ -181,6 +183,7 @@ class SignUp extends Component {
                     type="password"
                     id="confirmPassword"
                     autoComplete="current-password"
+                    inputProps={{ maxLength: 160 }}
                     onChange={this.handleInputChange}
                     helperText={this.state.passwordMatch ? "": "Passwords don't match."}
                   />

@@ -6,7 +6,6 @@ import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { LastLocationProvider } from 'react-router-last-location';
 import App from './App';
-import { CALLBACK_PATH } from './config/urls';
 import './index.scss';
 import theme from './theme';
 import { store, persistor } from './store';
@@ -22,7 +21,6 @@ ReactDOM.render(
             <Router>
                 <LastLocationProvider>
                     <Route path="/" component={App} />
-                    <Route path={CALLBACK_PATH} />
                 </LastLocationProvider>
             </Router>
         </PersistGate>

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import { ModalLink } from "react-router-modal-gallery";
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
@@ -8,9 +9,10 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { withRouter } from "react-router-dom";
-import QueueMusicIcon from '@material-ui/icons/QueueMusic';
+import LibraryMusicIcon from '@material-ui/icons/LibraryMusic';
 import HomeIcon from '@material-ui/icons/Home';
 import { MixPanel } from './MixPanel';
+import { connect } from 'react-redux';
 
 const drawerWidth = 240;
 
@@ -32,7 +34,10 @@ const styles = theme => ({
   drawerPaper: {
     width: drawerWidth,
     backgroundColor: '#444'
-  }
+  },
+  titleLink: {
+    textDecoration: 'none'
+  },
 });
 
 class SideBar extends Component {
@@ -41,8 +46,8 @@ class SideBar extends Component {
         if (item === "Home") {
             this.props.history.push('/')
         }
-        if (item === "My Playlists") {
-            this.props.history.push('/playlists')
+        if (item === "My Library") {
+            this.props.history.push('/library')
         }
         if (item === "Give Feedback") {
             MixPanel.track('View Give Feedback')
@@ -63,32 +68,54 @@ render(){
             onOpen={this.props.handleCloseSideBar}
           >
             <List>
-              {['Home', 'My Playlists'].map((text, index) => (
                 <ListItem
                     button
-                    key={text}
-                    onClick={() => this.handleClick(text)}
+                    key='Home'
+                    onClick={() => this.handleClick('Home')}
                 >
-                  <ListItemIcon className={classes.icon}>{index % 2 === 0 ? <HomeIcon /> : <QueueMusicIcon />}</ListItemIcon>
-                  <ListItemText primary={text} className={classes.text} />
+                  <ListItemIcon className={classes.icon}><HomeIcon /></ListItemIcon>
+                  <ListItemText primary='Home' className={classes.text} />
                 </ListItem>
-              ))}
+                {this.props.isLoggedIn ?
+                <ListItem
+                    button
+                    key='My Library'
+                    onClick={() => this.handleClick('My Library')}
+                >
+                  <ListItemIcon className={classes.icon}><LibraryMusicIcon /></ListItemIcon>
+                  <ListItemText primary='My Library' className={classes.text} />
+              </ListItem>
+                :
+                <ModalLink to='/login' className={classes.titleLink}>
+                    <ListItem
+                        button
+                        key='My Library'
+                    >
+                      <ListItemIcon className={classes.icon}><LibraryMusicIcon /></ListItemIcon>
+                      <ListItemText primary='My Library' className={classes.text} />
+                  </ListItem>
+                </ModalLink>}
             </List>
             <Divider />
             <List>
-              {['Give Feedback'].map((text, index) => (
                 <ListItem
                     button
-                    key={text}
-                    onClick={() => this.handleClick(text)}
+                    key='Give Feedback'
+                    onClick={() => this.handleClick('Give Feedback')}
                 >
                   <ListItemIcon className={classes.icon}>{<FeedbackIcon />}</ListItemIcon>
-                  <ListItemText primary={text} className={classes.text} />
+                  <ListItemText primary='Give Feedback' className={classes.text} />
                 </ListItem>
-              ))}
             </List>
           </SwipeableDrawer>
       );
   }
 }
-export default withRouter((withStyles(styles, { withTheme: true })(SideBar)));
+
+function mapStateToProps(state, props) {
+  return {
+    isLoggedIn: state.auth.isLoggedIn,
+  };
+}
+
+export default withRouter(connect(mapStateToProps)(withStyles(styles, { withTheme: true })(SideBar)));

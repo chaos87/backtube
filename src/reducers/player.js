@@ -5,6 +5,9 @@ import {
     PLAYER_ADD_MULTI_SONG_BEFORE,
     PLAYER_ADD_MULTI_SONG_AFTER,
     PLAYER_SYNC_PLAYLIST,
+    PLAYER_SYNC_CURRENT_SONG,
+    PLAYER_CLEAR_SONGS,
+    PLAYER_QUEUE_SONG,
 } from '../constants/actionTypes';
 
 const initialState = {
@@ -12,6 +15,7 @@ const initialState = {
   itemAddedId: "",
   audioLists: [],
   clearPriorAudioLists: true,
+  currentTrack: {},
 };
 
 export default function playerReducer(state = initialState, action) {
@@ -24,6 +28,11 @@ export default function playerReducer(state = initialState, action) {
             clearPriorAudioLists: false
         };
     case PLAYER_ADD_SONG:
+        return {
+            ...state,
+            audioLists: [...state.audioLists, ...action.payload]
+        };
+    case PLAYER_QUEUE_SONG:
         return {
             ...state,
             audioLists: [...state.audioLists, action.payload]
@@ -51,6 +60,16 @@ export default function playerReducer(state = initialState, action) {
         return {
             ...state,
             audioLists: action.payload,
+        };
+    case PLAYER_SYNC_CURRENT_SONG:
+        return {
+            ...state,
+            currentTrack: action.payload,
+        };
+    case PLAYER_CLEAR_SONGS:
+        return {
+            ...state,
+            audioLists: [],
         };
     default:
       return state;

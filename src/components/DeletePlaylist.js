@@ -12,7 +12,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
-import { getPlaylistsIdAndTitle, deletePlaylist } from '../actions/playlist';
+import { getPlaylists, deletePlaylist } from '../actions/playlist';
 import { MixPanel } from './MixPanel';
 
 const styles = theme => ({
@@ -65,8 +65,8 @@ class DeletePlaylist extends Component {
         }
     }
 
-    fetchPlaylists = async () => {
-        await this.props.getPlaylistsIdAndTitle({
+    fetchPlaylists = () => {
+        this.props.getPlaylists({
             accessToken: this.props.accessToken,
             userSub: this.props.userid
         });
@@ -81,9 +81,9 @@ class DeletePlaylist extends Component {
               MixPanel.track('Delete Playlist', {
                   'Playlist Title': this.props.playlists.filter(el => el._id === this.props.match.params.id)[0] ?
                        this.props.playlists.filter(el => el._id === this.props.match.params.id)[0].title: '',
-                  'Playlist ID': res._id
+                  'Playlist ID': this.props.match.params.id
               });
-              setTimeout(function () { this.props.history.push('/playlists'); }.bind(this), 1000);
+              setTimeout(function () { this.props.history.push('/library'); }.bind(this), 1000);
           }
       })
   };
@@ -136,14 +136,14 @@ function mapStateToProps(state, props) {
       loading: state.playlist.isDeleting,
       accessToken: state.auth.session !== null ? state.auth.session.accessToken.jwtToken: null,
       userid: state.auth.session !== null ? state.auth.session.accessToken.payload.sub: null,
-      playlists: state.playlist.playlistsOwnedIdTitle ? state.playlist.playlistsOwnedIdTitle: [],
+      playlists: state.playlist.playlistsOwned ? state.playlist.playlistsOwned: [],
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     deletePlaylist: (id, token) => dispatch(deletePlaylist(id, token)),
-    getPlaylistsIdAndTitle: (userInfo) => dispatch(getPlaylistsIdAndTitle(userInfo)),
+    getPlaylists: (userInfo) => dispatch(getPlaylists(userInfo)),
   };
 }
 

@@ -1,13 +1,17 @@
 import { baseURL, streamingURL } from '../config/urls';
 import { addMosaicToObject } from '../services/utils';
 
-export const updatePlaylistApi = async (userInfo) => {
-    const accessToken = userInfo.accessToken;
-    const playlistId = userInfo.id;
-    const title = userInfo.title;
-    const tracks = userInfo.playlist;
+export const updatePlaylistApi = async (playlistInfo) => {
+    const accessToken = playlistInfo.accessToken;
+    const playlistId = playlistInfo.id;
+    const title = playlistInfo.title;
+    const tracks = playlistInfo.playlist;
+    const themes = playlistInfo.themes;
+    const review = 'review' in playlistInfo ? playlistInfo.review : '';
+    const privacy = playlistInfo.private;
+    const tags = 'tags' in playlistInfo ? playlistInfo.tags : [];
     const newTracks = tracks.map(
-        ({ _id, name, musicSrc, source, singer, cover, album, duration  }) => (
+        ({ _id, name, musicSrc, source, singer, cover, album, duration, playlistId  }) => (
             {
                 _id: _id, title: name,
                 musicSrc: musicSrc.replace(streamingURL, '').split('&')[0],
@@ -21,7 +25,7 @@ export const updatePlaylistApi = async (userInfo) => {
           'accessToken': accessToken,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({"title": title, "tracks": newTracks})
+        body: JSON.stringify({"title": title, "tracks": newTracks, "review": review, "private": privacy, "tags": tags, "themes": themes})
     })
     .then(res => {
         return res.json();
@@ -32,12 +36,16 @@ export const updatePlaylistApi = async (userInfo) => {
     return playlist;
 };
 
-export const createPlaylistApi = async (userInfo) => {
-    const accessToken = userInfo.accessToken;
-    const title = userInfo.title;
-    const tracks = userInfo.playlist;
+export const createPlaylistApi = async (playlistInfo) => {
+    const accessToken = playlistInfo.accessToken;
+    const title = playlistInfo.title;
+    const tracks = playlistInfo.playlist;
+    const themes = playlistInfo.themes;
+    const review = 'review' in playlistInfo ? playlistInfo.review : '';
+    const tags = 'tags' in playlistInfo ? playlistInfo.tags : [];
+    const privacy = playlistInfo.private;
     const newTracks = tracks.map(
-        ({ _id, name, musicSrc, source, singer, cover, album, duration  }) => (
+        ({ _id, name, musicSrc, source, singer, cover, album, duration, playlistId  }) => (
             {
                 _id: _id, title: name,
                 musicSrc: musicSrc.replace(streamingURL, '').split('&')[0],
@@ -51,7 +59,7 @@ export const createPlaylistApi = async (userInfo) => {
           'accessToken': accessToken,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({"title": title, "tracks": newTracks})
+        body: JSON.stringify({"title": title, "tracks": newTracks, "review": review, "tags": tags, "private": privacy, "themes": themes})
     })
     .then(res => {
         return res.json();
@@ -110,23 +118,28 @@ export const getRecentPlaylistsApi = async () => {
     return playlists;
 }
 
-export const getPlaylistsIdAndTitleApi = async (userInfo) => {
-    const accessToken = userInfo.accessToken;
-    const userSub = userInfo.userSub;
-    const getUrl = baseURL + `/api/profile/` + userSub + `/playlistsNoTracks`;
-    let playlists = await fetch(getUrl, { method: 'GET',
+export const getCurrentPlaylistApi = async (playlistInfo) => {
+    const accessToken = playlistInfo.accessToken;
+    const getUrl = baseURL + `/public/playlist/` + playlistInfo.playlistId;
+    let playlist = await fetch(getUrl, { method: 'GET',
         headers: {
           'accessToken': accessToken,
           'Content-Type': 'application/json'
-        }
+        },
     })
     .then(res => {
         return res.json();
     })
+    .then(res => {
+        // Add field for covers mosaic
+        if ('tracks' in res) {
+            return addMosaicToObject(res)
+        } else { return res; }
+    })
     .catch(err => {
         return err
     })
-    return playlists;
+    return playlist;
 }
 
 export const deletePlaylistApi = async (id, token) => {

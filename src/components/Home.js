@@ -4,24 +4,22 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import HomeIcon from '@material-ui/icons/Home';
-import SaveIcon from '@material-ui/icons/Save';
-import QueueMusicIcon from '@material-ui/icons/QueueMusic';
-import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
-import StarBorderIcon from '@material-ui/icons/StarBorder';
-import SearchIcon from '@material-ui/icons/Search';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
 import Box from '@material-ui/core/Box';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
+import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
-import { ModalLink } from "react-router-modal-gallery";
+import FlexiLink from "./FlexiLink";
 import { hitApi } from '../actions/helloWorld';
-import { getRecentPlaylists } from '../actions/playlist';
+import { enableHome } from '../actions/home';
+import { resetTabs } from '../actions/nav';
+import { getRecentPlaylists, resetMustReload } from '../actions/playlist';
+import { getRecentThemes, resetMustReload as themeResetMustReload } from '../actions/theme';
 import { withLastLocation } from 'react-router-last-location';
+import { ModalLink } from "react-router-modal-gallery";
 import GridPlaylists from "./GridPlaylists";
+import GridThemes from "./GridThemes";
 
 
 const styles = theme => ({
@@ -33,7 +31,10 @@ const styles = theme => ({
       flexDirection: 'row',
       justifyContent:'center',
       alignItems: 'center',
-      top: theme.spacing(7)
+      top: theme.spacing(8),
+      [theme.breakpoints.only('sm')]: {
+          top: theme.spacing(9),
+      },
   },
   subContainer: {
       padding: theme.spacing(3),
@@ -43,22 +44,49 @@ const styles = theme => ({
   },
   container: {
       marginTop: theme.spacing(2),
+      marginBottom: theme.spacing(4)
   },
   link: {
-      marginLeft: theme.spacing(0.5)
+      marginLeft: theme.spacing(0.5),
+      color: theme.palette.secondary.main,
+      textDecoration: 'none',
+      "&:hover": {
+          textDecoration: 'underline'
+      }
   },
   form: {
       paddingTop: theme.spacing(5)
+  },
+  title: {
+      fontWeight: "bold",
+      marginBottom: theme.spacing(4)
+  },
+  button: {
+      color: 'white',
+  },
+  titleLink: {
+      textDecoration: 'none'
+  },
+  cta: {
+      paddingTop: theme.spacing(2)
   },
 });
 
 class Home extends React.Component {
     componentDidMount() {
+        this.props.resetTabs();
         if (this.props.isLoggedIn && this.props.accessToken !== null) {
             const token = this.props.accessToken
             this.props.hitApi(token)
         }
-        this.props.getRecentPlaylists();
+        if (this.props.refreshHome){
+            this.props.getRecentPlaylists();
+            this.props.getRecentThemes();
+            this.props.resetMustReload();
+            this.props.themeResetMustReload();
+        } else {
+            this.props.enableHome();
+        }
     }
 
     componentDidUpdate(prevProps) {
@@ -74,84 +102,102 @@ class Home extends React.Component {
         return (
             <div>
               <AppBar className={classes.bar} position="sticky">
-                 <HomeIcon className={classes.icon} fontSize="large"/>
+                  <Grid
+                      justify="center"
+                      alignItems="center"
+                      container
+                    >
+                <HomeIcon className={classes.icon} fontSize="large"/>
+            </Grid>
               </AppBar>
-            <Container className={classes.container}>
+            <Container maxWidth='md' className={classes.container}>
                 <Container className={classes.subContainer}>
-                <Typography gutterBottom variant="h4" component="h2">
-                  Welcome!
-                </Typography>
-                <Typography gutterBottom variant="body1" component="h2">
-                  Backtube is a streaming app for music lovers who can create and follow playlists of their favorite songs from Youtube or Bandcamp.
-                </Typography>
-                <Typography gutterBottom variant="body1" component="h2">
-                  Don't have an account yet?
-                  <ModalLink className={classes.link} to='/register'>
-                    {"Register"}
-                  </ModalLink>
-                  !
-                </Typography>
-                <Box display="flex" justifyContent="center">
-                    <List>
-                      <ListItem>
-                        <ListItemAvatar>
-                          <Avatar>
-                            <SearchIcon />
-                          </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary="Search music from Youtube, Bandcamp or playlists created by other backtubers." />
-                      </ListItem>
-                      <ListItem>
-                        <ListItemAvatar>
-                          <Avatar>
-                            <PlaylistAddIcon />
-                          </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary="Add tracks to the player." />
-                      </ListItem>
-                      <ListItem>
-                        <ListItemAvatar>
-                          <Avatar>
-                            <SaveIcon />
-                          </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary="Create a playlist by saving the tracks queued in the player." />
-                      </ListItem>
-                      <ListItem>
-                        <ListItemAvatar>
-                          <Avatar>
-                            <StarBorderIcon />
-                          </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary="Follow playlists created by other backtubers." />
-                      </ListItem>
-                      <ListItem>
-                        <ListItemAvatar>
-                          <Avatar>
-                            <QueueMusicIcon />
-                          </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary="Access your saved and followed playlists." />
-                      </ListItem>
-                    </List>
-                </Box>
-                <Typography className={classes.form} gutterBottom variant="body1" component="h2">
-                  Found a bug? Want to suggest a feature or simply give some feedback? Much appreciated if you could fill the
-                  <a target={'_blank'} rel="noopener noreferrer" className={classes.link} href='https://forms.gle/NJNK7Y9JhXj8zWgL6'>
-                    {"form"}
-                </a>
-                  .
-                </Typography>
-            </Container>
-                <Box p={3}>
-                    <Typography component={'span'}>
-                      <GridPlaylists
-                          playlistLists={{'New Playlists': this.props.backtube}}
-                          loading={this.props.loading}
-                          source="backtube"
-                        />
+                    <Typography color="primary" gutterBottom variant="h4" component="h2" className={classes.title}>
+                      Welcome
                     </Typography>
+                    <Typography variant="body1" component="h2">
+                        Search and listen to your favorite tracks from Youtube Music and Bandcamp.
+                    </Typography>
+                    <Typography gutterBottom variant="body1" component="h2">
+                        Create playlist themes and contribute with your own playlists.
+                    </Typography>
+                    <Typography variant="h6" component="h2" className={classes.cta}>
+                      Don't have an account yet?
+                      <ModalLink className={classes.link} to='/register'>
+                        {"Register"}
+                      </ModalLink>
+                      !
+                    </Typography>
+                    <Typography className={classes.form} gutterBottom variant="subtitle2" component="h2">
+                      Found a bug? Want to suggest a feature or simply give some feedback? Much appreciated if you could fill the
+                      <a target={'_blank'} rel="noopener noreferrer" className={classes.link} href='https://forms.gle/NJNK7Y9JhXj8zWgL6'>
+                        {"form"}
+                    </a>
+                      .
+                    </Typography>
+                </Container>
+
+                <Box p={3} style={{paddingTop: 48, paddingBottom: 12}}>
+                  <GridThemes
+                      themeLists={{'New Themes': this.props.themes}}
+                      loading={this.props.loading}
+                      row={true}
+                      loadThemeOnClick={false}
+                    />
                 </Box>
+                <FlexiLink
+                    isLoggedIn={this.props.isLoggedIn}
+                    to={{
+                       pathname: '/theme/cannotShareUrl',
+                       theme: {
+                           title: "Untitled theme #" + (this.props.themes.length + 1),
+                           creator: {username: this.props.profile.username, _id: this.props.userid, avatar: this.props.profile.avatar},
+                           playlists: [],
+                           description: '',
+                       },
+                       editing: true,
+                     }}
+                     className={classes.titleLink}
+                    >
+                    <Fab
+                      variant="extended"
+                      color="secondary"
+                      className={classes.button}
+                    >
+                     <AddIcon /> Create Theme
+                 </Fab>
+             </FlexiLink>
+                <Box p={3} style={{paddingTop: 48, paddingBottom: 12}}>
+                  <GridPlaylists
+                      playlistLists={{'New Playlists': this.props.playlists}}
+                      loading={this.props.loading}
+                      source="backtube"
+                      row={true}
+                    />
+                </Box>
+                <FlexiLink
+                    isLoggedIn={this.props.isLoggedIn}
+                    to={{
+                       pathname: '/playlist/cannotShareUrl',
+                       playlist: {
+                           title: "Untitled playlist #" + (this.props.owned.length + 1),
+                           creator: {username: this.props.profile.username, _id: this.props.userid, avatar: this.props.profile.avatar},
+                           tracks: [],
+                           review: '',
+                       },
+                       source: 'owned',
+                       editing: true,
+                   }}
+                   className={classes.titleLink}
+                    >
+                    <Fab
+                      variant="extended"
+                      color="secondary"
+                      className={classes.button}
+                    >
+                     <AddIcon /> Create Playlist
+                 </Fab>
+             </FlexiLink>
               </Container>
             </div>
 
@@ -162,18 +208,26 @@ class Home extends React.Component {
 const mapDispatchToProps = dispatch => {
   return {
     hitApi: token => dispatch(hitApi(token)),
-    getRecentPlaylists: () => dispatch(getRecentPlaylists())
+    getRecentPlaylists: () => dispatch(getRecentPlaylists()),
+    getRecentThemes: () => dispatch(getRecentThemes()),
+    enableHome: () => dispatch(enableHome()),
+    resetTabs: () => dispatch(resetTabs()),
+    resetMustReload: () => dispatch(resetMustReload()),
+    themeResetMustReload: () => dispatch(themeResetMustReload()),
   };
 }
 
 const mapStateToProps = state => {
   return {
       isLoggedIn: state.auth.isLoggedIn,
-      username: state.profile.username,
+      owned: state.playlist.playlistsOwned ? state.playlist.playlistsOwned: [],
+      profile: state.profile.profile !== null ? state.profile.profile : {username: "", avatar: "/broken-image.jpg"},
       userid: state.auth.session !== null ? state.auth.session.accessToken.payload.sub: null,
       accessToken: state.auth.session !== null ? state.auth.session.accessToken.jwtToken: null,
       loading: state.playlist.isFetchingRecent,
-      backtube: state.playlist.playlistsRecent ? state.playlist.playlistsRecent : [],
+      playlists: state.playlist.playlistsRecent ? state.playlist.playlistsRecent : [],
+      themes: state.theme.themesRecent ? state.theme.themesRecent : [],
+      refreshHome: state.home.refreshHome,
    }
 }
 

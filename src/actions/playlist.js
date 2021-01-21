@@ -5,12 +5,12 @@ import {
     PLAYLIST_GET_STARTED,
     PLAYLIST_GET_FAILED,
     PLAYLIST_GET_SUCCESS,
-    PLAYLIST_GET_ID_STARTED,
-    PLAYLIST_GET_ID_FAILED,
-    PLAYLIST_GET_ID_SUCCESS,
     PLAYLIST_GET_RECENT_STARTED,
     PLAYLIST_GET_RECENT_FAILED,
     PLAYLIST_GET_RECENT_SUCCESS,
+    PLAYLIST_GET_CURRENT_STARTED,
+    PLAYLIST_GET_CURRENT_FAILED,
+    PLAYLIST_GET_CURRENT_SUCCESS,
     PLAYLIST_UPDATE_SUCCESS,
     PLAYLIST_UPDATE_STARTED,
     PLAYLIST_UPDATE_FAILED,
@@ -21,16 +21,21 @@ import {
     PLAYLIST_FOLLOW_FAILED,
     PLAYLIST_FOLLOW_SUCCESS,
     PLAYLIST_CLEAR,
+    PLAYLIST_CURRENT_REFRESH,
+    PLAYLIST_CURRENT_NO_REFRESH,
+    PLAYLIST_CURRENT_SET,
+    PLAYLIST_RESET_MUST_RELOAD,
+    PLAYLIST_MUST_RELOAD
 } from '../constants/actionTypes';
 import {
     createPlaylistApi,
     updatePlaylistApi,
     getPlaylistsApi,
-    getPlaylistsIdAndTitleApi,
     getRecentPlaylistsApi,
     deletePlaylistApi,
     addFollowerApi,
-    removeFollowerApi
+    removeFollowerApi,
+    getCurrentPlaylistApi
 } from '../api/playlist';
 import { checkAuth, refreshAuthTokenStarted } from './auth';
 
@@ -51,22 +56,6 @@ export function getPlaylists(userInfo) {
   }
 }
 
-export function getPlaylistsIdAndTitle(userInfo) {
-  return function(dispatch) {
-    dispatch(refreshAuthTokenStarted());
-    dispatch(checkAuth());
-    dispatch(getPlaylistsIdAndTitleStarted())
-    return getPlaylistsIdAndTitleApi(userInfo)
-      .then(data => {
-          dispatch(getPlaylistsIdAndTitleSuccess(data));
-      })
-      .catch(err => {
-          console.log(err.message)
-          dispatch(getPlaylistsIdAndTitleFailed(err.message));
-      });
-  }
-}
-
 export function getRecentPlaylists() {
   return function(dispatch) {
     dispatch(getRecentPlaylistsStarted())
@@ -77,6 +66,24 @@ export function getRecentPlaylists() {
       .catch(err => {
           console.log(err.message)
           dispatch(getRecentPlaylistsFailed(err.message));
+      });
+  }
+}
+
+export function getCurrentPlaylist(playlistInfo) {
+  return function(dispatch) {
+    dispatch(getCurrentPlaylistStarted())
+    return getCurrentPlaylistApi(playlistInfo)
+      .then(data => {
+          if('message' in data){
+              dispatch(getCurrentPlaylistFailed(data.message));
+          } else {
+              dispatch(getCurrentPlaylistSuccess(data));
+          }
+      })
+      .catch(err => {
+          console.log(err.message)
+          dispatch(getCurrentPlaylistFailed(err.message));
       });
   }
 }
@@ -199,24 +206,24 @@ const getRecentPlaylistsFailed = error => ({
   }
 });
 
-const getPlaylistsSuccess = (data) => ({
-  type: PLAYLIST_GET_SUCCESS,
+const getCurrentPlaylistSuccess = (data) => ({
+  type: PLAYLIST_GET_CURRENT_SUCCESS,
   payload: data
 });
 
-const getPlaylistsIdAndTitleStarted = () => ({
-  type: PLAYLIST_GET_ID_STARTED
+const getCurrentPlaylistStarted = () => ({
+  type: PLAYLIST_GET_CURRENT_STARTED
 });
 
-const getPlaylistsIdAndTitleFailed = error => ({
-  type: PLAYLIST_GET_ID_FAILED,
+const getCurrentPlaylistFailed = error => ({
+  type: PLAYLIST_GET_CURRENT_FAILED,
   payload: {
     error
   }
 });
 
-const getPlaylistsIdAndTitleSuccess = (data) => ({
-  type: PLAYLIST_GET_ID_SUCCESS,
+const getPlaylistsSuccess = (data) => ({
+  type: PLAYLIST_GET_SUCCESS,
   payload: data
 });
 
@@ -289,3 +296,23 @@ const removeFollowerSuccess = (data) => ({
 export const clearPlaylists = () => ({
   type: PLAYLIST_CLEAR
 });
+
+export const disableCurrent = () => ({
+  type: PLAYLIST_CURRENT_NO_REFRESH
+})
+
+export const enableCurrent = () => ({
+  type: PLAYLIST_CURRENT_REFRESH
+})
+
+export const updateCurrent = (playlist) => ({
+    type: PLAYLIST_CURRENT_SET, payload: playlist
+})
+
+export const resetMustReload = () => ({
+    type: PLAYLIST_RESET_MUST_RELOAD
+})
+
+export const mustReload = () => ({
+    type: PLAYLIST_MUST_RELOAD
+})

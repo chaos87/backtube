@@ -1,10 +1,12 @@
 import { baseURL } from '../config/urls';
+import { addMosaicToObject } from '../services/utils';
 
 export const updateProfileApi = async profile => {
   // Store avatar file in S3
-  let avatarResponse = null;
+  let avatarResponse = profile.file;
   const accessToken = profile.accessToken;
-  if (profile.file !== null && profile.file !== undefined) {
+  if (profile.file !== null && profile.file !== undefined
+      && profile.file instanceof Object && profile.file.constructor === Object) {
       let fileParts = profile.file.name.split('.');
       let fileName = 'avatars/' + profile.userSub;
       let fileType = fileParts[1];
@@ -80,7 +82,7 @@ export const updateProfileApi = async profile => {
     return error
   })
   return {
-      "url": avatarResponse,
+      "avatar": avatarResponse,
       "username": username
   };
 };
@@ -97,6 +99,37 @@ export const readProfileApi = async userInfo => {
     })
     .then(res => {
         return res.json();
+    })
+    .then(res => {
+        // Add field for covers mosaic
+        if ('playlistsOwned' in res) {
+            return Object.assign(
+                res,
+                {playlistsOwned: res.playlistsOwned.map(el => addMosaicToObject(el))},
+            )
+        } else { return res; }
+    })
+    .catch(err => {
+        return err
+    })
+    return profile;
+}
+
+export const getCurrentProfileApi = async userInfo => {
+    const userSub = userInfo.userSub;
+    const getUrl = baseURL + `/public/profile/` + userSub;
+    let profile = await fetch(getUrl, { method: 'GET' })
+    .then(res => {
+        return res.json();
+    })
+    .then(res => {
+        // Add field for covers mosaic
+        if ('playlistsOwned' in res) {
+            return Object.assign(
+                res,
+                {playlistsOwned: res.playlistsOwned.map(el => addMosaicToObject(el))},
+            )
+        } else { return res; }
     })
     .catch(err => {
         return err

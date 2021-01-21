@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -8,7 +10,10 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
 import GridPlaylists from "./GridPlaylists"
+import FlexiLink from "./FlexiLink";
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { setTab } from '../actions/nav';
+import { connect } from 'react-redux';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -43,7 +48,7 @@ function a11yProps(index) {
   };
 }
 
-const useStyles = makeStyles((theme) => ({
+const styles = theme => ({
   root: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
@@ -58,52 +63,111 @@ const useStyles = makeStyles((theme) => ({
       marginRight: theme.spacing(1)
   },
   appbar: {
-      top: theme.spacing(7)
+      top: theme.spacing(8),
+      [theme.breakpoints.only('sm')]: {
+          top: theme.spacing(9),
+      },
   },
   container: {
       marginTop: theme.spacing(2),
   },
-}));
+  button: {
+      color: 'white',
+      marginBottom: theme.spacing(4),
+      position: 'sticky',
+      top: 120,
+      zIndex: 1000
+  },
+  titleLink: {
+      textDecoration: 'none'
+  },
+});
 
-export default function SimpleTabs(props) {
-  const classes = useStyles();
-  const [value, setValue] = React.useState(0);
+class TabPane extends Component {
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  handleChange = (event, newValue) => {
+    this.props.setTab(newValue)
   };
 
-  return (
-    <div className={classes.root}>
-      <AppBar position="sticky" className={classes.appbar}>
-        <Tabs
-            value={value}
-            onChange={handleChange}
-            aria-label="simple tabs example"
-            variant="scrollable"
-            scrollButtons="on"
-        >
-            {Object.keys(props.data).map((item, i) => (
-                <Tab label={
-                    <Box className={classes.box}>
-                      <Box display="inline" className={classes.label}>{props.labels[item] ? props.labels[item]: 'playlists'}</Box>
-                        {props.loadingIndicators[item] && <CircularProgress display="inline" color='inherit' size={20}/>}
-                    </Box>} key={item}   {...a11yProps({i})}
-                />
-            ))}
-        </Tabs>
-      </AppBar>
-      <Container className={classes.container}>
-          {Object.keys(props.data).map((item, i) => (
-              <TabPanel value={value} index={i} key={item}>
-                <GridPlaylists
-                    playlistLists={props.data[item] instanceof Array? {playlists: props.data[item]}: props.data[item]}
-                    loading={props.loadingIndicators[item]}
-                    source={item}
-                />
-              </TabPanel>
-          ))}
-      </Container>
-    </div>
-  );
+  render() {
+      const { classes } = this.props;
+      return (
+        <div className={classes.root}>
+          <AppBar position="sticky" className={classes.appbar}>
+
+            <Tabs
+                value={this.props.tab}
+                onChange={this.handleChange}
+                aria-label="simple tabs example"
+                variant="scrollable"
+                scrollButtons="on"
+                className={classes.tabs}
+            >
+                {Object.keys(this.props.data).map((item, i) => (
+                    <Tab label={
+                        <Box className={classes.box}>
+                          <Box display="inline" className={classes.label}>{this.props.labels[item] ? this.props.labels[item]: 'playlists'}</Box>
+                            {this.props.loadingIndicators[item] && <CircularProgress display="inline" color='inherit' size={20}/>}
+                        </Box>} key={item}   {...a11yProps({i})}
+                    />
+                ))}
+            </Tabs>
+          </AppBar>
+          <Container className={classes.container}>
+              {Object.keys(this.props.data).map((item, i) => (
+                  <TabPanel value={this.props.tab} index={i} key={item}>
+                    {item === 'owned' &&
+                        <FlexiLink
+                            isLoggedIn={this.props.isLoggedIn}
+                            to={{
+                               pathname: '/playlist/cannotShareUrl',
+                               playlist: {
+                                   title: "Untitled playlist #" + (this.props.owned.length + 1),
+                                   creator: {username: this.props.profile.username, _id: this.props.userid, avatar: this.props.profile.avatar},
+                                   tracks: [],
+                                   review: '',
+                               },
+                               source: 'owned',
+                               editing: true,
+                           }}
+                           className={classes.titleLink}
+                            >
+                            <Fab
+                              variant="extended"
+                              color="secondary"
+                              className={classes.button}
+                            >
+                             <AddIcon /> Create Playlist
+                         </Fab>
+                     </FlexiLink>
+                    }
+                    <GridPlaylists
+                        playlistLists={this.props.data[item] instanceof Array? {playlists: this.props.data[item]}: this.props.data[item]}
+                        loading={this.props.loadingIndicators[item]}
+                        source={item}
+                        row={false}
+                    />
+                  </TabPanel>
+              ))}
+          </Container>
+        </div>);
+    }
 }
+
+function mapDispatchToProps(dispatch) {
+  return {
+    setTab: (value) => dispatch(setTab(value)),
+  };
+}
+
+function mapStateToProps(state, props) {
+  return {
+    tab: state.nav.tab,
+    isLoggedIn: state.auth.isLoggedIn,
+    owned: state.playlist.playlistsOwned ? state.playlist.playlistsOwned: [],
+    profile: state.profile.profile !== null ? state.profile.profile : {username: "", avatar: "/broken-image.jpg"},
+    userid: state.auth.session !== null ? state.auth.session.accessToken.payload.sub: null,
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(TabPane))

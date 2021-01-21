@@ -2,16 +2,14 @@ import React from 'react';
 import './AppLayout.scss';
 import ReactJkMusicPlayer from "react-jinke-music-player";
 import "react-jinke-music-player/assets/index.css";
-import SaveIcon from '@material-ui/icons/Save';
-import IconButton from '@material-ui/core/IconButton';
 import Header from './Header';
 import SideBar from './SideBar';
 import ScrollToTop from './ScrollToTop';
-import { ModalLink } from "react-router-modal-gallery";
 import {withStyles} from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import {withRouter} from 'react-router-dom';
-import { syncPlaylist } from '../actions/player';
+import { syncPlaylist, syncCurrentTrack } from '../actions/player';
+import { resetTabs } from '../actions/nav';
 import { MixPanel } from './MixPanel';
 
 const styles = theme => ({
@@ -29,12 +27,23 @@ const styles = theme => ({
   }
 });
 
+export const AudioContext = React.createContext(null);
+
 class AppLayout extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             searchValue: '',
             open: false,
+
+        }
+        this.audio = {}
+    }
+
+    componentDidMount(){
+        this.props.resetTabs()
+        if (!this.props.audioLists.map(el => el._id).includes(this.props.currentTrack._id)){
+            this.props.syncCurrentTrack({})
         }
     }
 
@@ -57,11 +66,27 @@ class AppLayout extends React.Component {
         this.setState({open: false})
     };
 
-    handleAudioError = event => {
-        console.log(event)
+    handleOnAudioPlay = event => {
+        if (event._id === this.props.currentTrack._id) {
+            event.playlistId = this.props.currentTrack.playlistId
+        }
+
+        this.props.syncCurrentTrack(Object.assign(event, {playing: true}))
     }
 
-    handleAudioEnded = (currentPlayId, audioLists, audioInfo) => {
+    handleOnAudioPause = event => {
+        if (event._id === this.props.currentTrack._id) {
+            event.playlistId = this.props.currentTrack.playlistId
+        }
+        this.props.syncCurrentTrack(Object.assign(event, {playing: false}))
+    }
+
+    handleOnAudioListsChange = (currentPlayId, audioLists, audioInfo) => {
+        this.props.syncCurrentTrack(Object.assign(audioInfo, {playing: true}))
+        this.props.syncPlaylist(currentPlayId, audioLists, audioInfo)
+    }
+
+    handleOnAudioEnded = (currentPlayId, audioLists, audioInfo) => {
         let songPlayedDate = new Date().toISOString();
         MixPanel.track('Play Song', {
             'Song ID': audioInfo._id,
@@ -100,58 +125,57 @@ class AppLayout extends React.Component {
             quietUpdate: true,
             seeked: true,
             defaultPosition: {bottom:0,right:0},
-            extendsContent: (
-                <ModalLink to={this.props.isLoggedIn ? '/savePlaylist': '/login'}>
-                    <IconButton
-                        className={classes.saveIcon}
-                        title="Save playlist"
-                    >
-                        <SaveIcon/>
-                  </IconButton>
-              </ModalLink>
-          )
+            getAudioInstance: (audio) => {
+            this.audio = audio
+            },
       }
       return (
-        <ScrollToTop>
-          <div className="App">
-              <Header
-                  onSearch={this.handleSearch}
-                  onChange={this.handleOnChange}
-                  searchValue={this.state.searchValue}
-                  isSearching={this.props.isSearching}
-                  openSideBar={this.handleOpenSideBar}
-              />
-              <SideBar
-                  open={this.state.open}
-                  handleCloseSideBar={this.handleCloseSideBar}
-              />
-            {this.props.children}
-            <ReactJkMusicPlayer
-                className={classes.player}
-                audioLists={this.props.audioLists}
-                onAudioListsChange={this.props.syncPlaylist}
-                onAudioError={this.handleAudioError}
-                onAudioEnded={this.handleAudioEnded}
-                {...initOptions}
-            />
-          </div>
-        </ScrollToTop>
+          <AudioContext.Provider value={this.audio}>
+            <ScrollToTop>
+              <div className="App">
+                  <Header
+                      onSearch={this.handleSearch}
+                      onChange={this.handleOnChange}
+                      searchValue={this.state.searchValue}
+                      isSearching={this.props.isSearching}
+                      openSideBar={this.handleOpenSideBar}
+                  />
+                  <SideBar
+                      open={this.state.open}
+                      handleCloseSideBar={this.handleCloseSideBar}
+                  />
+                {this.props.children}
+                <ReactJkMusicPlayer
+                    className={classes.player}
+                    audioLists={this.props.audioLists}
+                    onAudioListsChange={this.handleOnAudioListsChange}
+                    onAudioEnded={this.handleOnAudioEnded}
+                    onAudioPlay={this.handleOnAudioPlay}
+                    onAudioPause={this.handleOnAudioPause}
+                    {...initOptions}
+                />
+              </div>
+            </ScrollToTop>
+          </AudioContext.Provider>
       );
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    syncPlaylist: (currentPlayId, audioLists, audioInfo) => dispatch(syncPlaylist(currentPlayId, audioLists, audioInfo))
+    syncPlaylist: (currentPlayId, audioLists, audioInfo) => dispatch(syncPlaylist(currentPlayId, audioLists, audioInfo)),
+    syncCurrentTrack: audioInfo => dispatch(syncCurrentTrack(audioInfo)),
+    resetTabs: () => dispatch(resetTabs()),
   };
 }
 
 function mapStateToProps(state, props) {
   return {
-    audioLists: state.player.audioLists,
+    audioLists: state.player.audioLists ? state.player.audioLists : [],
     clearPriorAudioLists: state.player.clearPriorAudioLists,
     isSearching: state.search.isSearching,
     isLoggedIn: state.auth.isLoggedIn,
+    currentTrack: state.player.currentTrack,
   };
 }
 
