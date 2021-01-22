@@ -345,6 +345,7 @@ class PlaylistPage extends Component {
           if (['backtube', 'owned', 'followed'].includes(this.props.location.source)){
               MixPanel.track('View Playlist Page', {
                   'Playlist ID': this.props.location.playlist._id,
+                  'Playlist Title': this.props.location.playlist.title,
                   'Playlist Tracks': newTracks,
                   'Playlist Themes': this.props.location.playlist.themes,
                   'Playlist Private': this.props.location.playlist.private,
@@ -379,6 +380,7 @@ class PlaylistPage extends Component {
                       })
                       MixPanel.track('View Playlist Page', {
                           'Playlist ID': this.props.match.params.id,
+                          'Playlist Title': this.props.location.playlist.title,
                           'Playlist Tracks': this.props.playlist.tracks,
                           'Playlist Themes': this.props.playlist.themes,
                           'Playlist Private': this.props.playlist.private,
