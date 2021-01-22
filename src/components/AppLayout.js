@@ -42,7 +42,7 @@ class AppLayout extends React.Component {
 
     componentDidMount(){
         this.props.resetTabs()
-        if (!this.props.audioLists.map(el => el._id).includes(this.props.currentTrack._id)){
+        if (this.props.currentTrack && !this.props.audioLists.map(el => el._id).includes(this.props.currentTrack._id)){
             this.props.syncCurrentTrack({})
         }
     }
