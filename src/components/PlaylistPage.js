@@ -380,7 +380,7 @@ class PlaylistPage extends Component {
                       })
                       MixPanel.track('View Playlist Page', {
                           'Playlist ID': this.props.match.params.id,
-                          'Playlist Title': this.props.location.playlist.title,
+                          'Playlist Title': this.props.playlist.title,
                           'Playlist Tracks': this.props.playlist.tracks,
                           'Playlist Themes': this.props.playlist.themes,
                           'Playlist Private': this.props.playlist.private,
