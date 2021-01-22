@@ -221,7 +221,7 @@ const mapStateToProps = state => {
   return {
       isLoggedIn: state.auth.isLoggedIn,
       owned: state.playlist.playlistsOwned ? state.playlist.playlistsOwned: [],
-      profile: state.profile.profile !== null ? state.profile.profile : {username: "", avatar: "/broken-image.jpg"},
+      profile: state.profile.profile ? state.profile.profile : {username: "", avatar: "/broken-image.jpg"},
       userid: state.auth.session !== null ? state.auth.session.accessToken.payload.sub: null,
       accessToken: state.auth.session !== null ? state.auth.session.accessToken.jwtToken: null,
       loading: state.playlist.isFetchingRecent,
