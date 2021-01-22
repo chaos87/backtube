@@ -446,7 +446,7 @@ function mapStateToProps(state, props) {
     loading: state.theme.isFetchingCurrent,
     isLoggedIn: state.auth.isLoggedIn,
     accessToken: state.auth.session !== null ? state.auth.session.accessToken.jwtToken: null,
-    profile: state.profile.profile !== null ? state.profile.profile : {username: "", avatar: ""},
+    profile: state.profile.profile ? state.profile.profile : {username: "", avatar: ""},
     userid: state.auth.session !== null ? state.auth.session.accessToken.payload.sub: null,
     isSaving: state.theme.isSaving,
     theme: state.theme.themeCurrent ? state.theme.themeCurrent: {creator: {username: ""}, playlists: [], title: "", description: ""},

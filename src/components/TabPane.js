@@ -165,7 +165,7 @@ function mapStateToProps(state, props) {
     tab: state.nav.tab,
     isLoggedIn: state.auth.isLoggedIn,
     owned: state.playlist.playlistsOwned ? state.playlist.playlistsOwned: [],
-    profile: state.profile.profile !== null ? state.profile.profile : {username: "", avatar: "/broken-image.jpg"},
+    profile: state.profile.profile ? state.profile.profile : {username: "", avatar: "/broken-image.jpg"},
     userid: state.auth.session !== null ? state.auth.session.accessToken.payload.sub: null,
   };
 }

@@ -188,7 +188,7 @@ class SignIn extends Component {
 function mapStateToProps(state, props) {
   return {
     auth: state.auth,
-    profile: state.profile.profile !== null ? state.profile.profile : {username: "", avatar: "/broken-image.jpg"},
+    profile: state.profile.profile ? state.profile.profile : {username: "", avatar: "/broken-image.jpg"},
   };
 }
 
