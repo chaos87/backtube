@@ -13,6 +13,7 @@ import resetReducer from './reset';
 import navReducer from './nav';
 import libraryReducer from './library';
 import themeReducer from './theme';
+import versionReducer from './version';
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
@@ -40,6 +41,11 @@ const playerPersistConfig = {
   blacklist: ['itemAddedId', 'addLoading', 'currentTrack', 'audio'],
 };
 
+const versionPersistConfig = {
+  key: 'version',
+  storage: storage,
+};
+
 export default combineReducers({
   auth: persistReducer(authPersistConfig, authReducer),
   register: persistReducer(registerPersistConfig, registerReducer),
@@ -55,4 +61,5 @@ export default combineReducers({
   nav: navReducer,
   library: libraryReducer,
   theme: themeReducer,
+  version: persistReducer(versionPersistConfig, versionReducer),
 })

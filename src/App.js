@@ -17,6 +17,7 @@ import MuiModal from "./components/MuiModal";
 import {Route, withRouter, Redirect} from 'react-router-dom';
 import { ModalSwitch, ModalRoute } from "react-router-modal-gallery";
 import { connect } from 'react-redux';
+import { checkVersion } from './actions/version';
 import PrivateRoute from "./components/PrivateRoute";
 
 const routes = [
@@ -104,6 +105,11 @@ const modalRoutes = routes
   .map(route => <ModalRoute key={route.path} {...route} />);
 
 class App extends React.Component {
+
+    componentDidMount(){
+        this.props.checkVersion(this.props.localVersion, process.env.REACT_APP_BUILD_ID)
+    }
+
     render() {
       return (
         <AppLayout>
@@ -130,4 +136,17 @@ class App extends React.Component {
 }
 
 
-export default withRouter(connect()(App));
+function mapDispatchToProps(dispatch) {
+  return {
+    checkVersion: (localVersion, siteVersion) => dispatch(checkVersion(localVersion, siteVersion)),
+  };
+}
+
+function mapStateToProps(state, props) {
+  return {
+    localVersion: state.version.version,
+  };
+}
+
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));
