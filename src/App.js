@@ -106,7 +106,7 @@ const modalRoutes = routes
 
 class App extends React.Component {
 
-    componentDidMount(){
+    componentWillMount(){
         this.props.checkVersion(this.props.localVersion, process.env.REACT_APP_BUILD_ID)
     }
 
