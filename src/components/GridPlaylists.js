@@ -333,9 +333,11 @@ class GridPlaylists extends Component {
                                           </CardActionArea>
                                           <div className={classes.cardBottom}>
                                                <CardContent className={classes.content}>
-                                                   <Typography noWrap variant="subtitle1" component="h1" align="left" className={classes.title}>
-                                                     {elem.title}
-                                                   </Typography>
+                                                   <Link to={{ pathname: `/playlist/${elem._id}`}} className={classes.link}>
+                                                       <Typography noWrap variant="subtitle1" component="h1" align="left" className={classes.title}>
+                                                         {elem.title}
+                                                       </Typography>
+                                                   </Link>
                                                    {elem.artist ?
                                                        <Typography noWrap variant="body1" align="left" component="h2">
                                                          {elem.artist}
