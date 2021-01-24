@@ -115,11 +115,9 @@ class Header extends Component {
                       }
                       value={this.props.searchValue}
                       onKeyPress={event => this.props.onSearch(event)}
-                      disabled={this.props.isSearching}
                     />
                 </div>
                 <UserIcon
-                    isSearching={this.props.isSearching}
                     isLoggedIn={this.props.isLoggedIn}
                     className={classes.accountButton}
                 />

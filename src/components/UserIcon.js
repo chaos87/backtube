@@ -102,7 +102,6 @@ function mapStateToProps(state, props) {
   return {
     profile: state.profile.profile ? state.profile.profile : {username: "", avatar: "/broken-image.jpg"},
     userid: state.auth.session !== null ? state.auth.session.accessToken.payload.sub: null,
-    isSearching: state.search.isSearching
   };
 }
 
