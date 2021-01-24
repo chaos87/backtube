@@ -6,7 +6,7 @@ export const updateProfileApi = async profile => {
   let avatarResponse = profile.file;
   const accessToken = profile.accessToken;
   if (profile.file !== null && profile.file !== undefined
-      && profile.file instanceof Object && profile.file.constructor === Object) {
+      && profile.file instanceof Object) {
       let fileParts = profile.file.name.split('.');
       let fileName = 'avatars/' + profile.userSub;
       let fileType = fileParts[1];
