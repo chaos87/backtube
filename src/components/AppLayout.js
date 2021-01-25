@@ -114,7 +114,7 @@ class AppLayout extends React.Component {
             clearPriorAudioLists: this.props.clearPriorAudioLists,
             toggleMode: true,
             preload: false,
-            autoPlay: true,
+            autoPlay: false,
             showDownload: false,
             showThemeSwitch: false,
             showPlayMode: true,
