@@ -123,7 +123,7 @@ class AppLayout extends React.Component {
             loadAudioErrorPlayNext: false,
             autoPlayInitLoadPlayList: true,
             quietUpdate: true,
-            seeked: true,
+            seeked: false,
             defaultPosition: {bottom:0,right:0},
             getAudioInstance: (audio) => {
             this.audio = audio
