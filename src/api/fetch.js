@@ -30,9 +30,11 @@ export const makeBandcampSearchApiCall = async searchInput => {
       }).catch(error => {
           return error
       });
-  const tmpArtistAlbums = await searchBCartistAlbums(streamingURL, response.filter(x => x.type === "artist").map(x => x.url));
+
+  const uniqueObjects = [...new Map(response.map(item => [item.url, item])).values()]
+  const tmpArtistAlbums = await searchBCartistAlbums(streamingURL, uniqueObjects.filter(x => x.type === "artist").map(x => x.url));
   const artistAlbums = tmpArtistAlbums.flat().filter(x => !x.includes('?action=download'));
-  const nearlyAllAlbums = artistAlbums.concat(response.filter(x => x.type === "album").map(x => x.url));
+  const nearlyAllAlbums = artistAlbums.concat(uniqueObjects.filter(x => x.type === "album").map(x => x.url));
   const trackAlbums = await searchBCtrack4Album(streamingURL, nearlyAllAlbums.filter(x => x.includes('/track/')));
   const allAlbumsDuplicated = nearlyAllAlbums.filter(x => !x.includes('/track/')).concat(trackAlbums.filter(x => x));
   const allAlbums = [...new Set(allAlbumsDuplicated)];
