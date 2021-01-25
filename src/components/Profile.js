@@ -320,7 +320,7 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
   return {
-      profile: state.profile.profileCurrent !== null ? state.profile.profileCurrent : {username: "", avatar: "/broken-image.jpg"},
+      profile: state.profile.profileCurrent ? state.profile.profileCurrent : {username: "", avatar: "/broken-image.jpg"},
       userid: state.auth.session !== null ? state.auth.session.accessToken.payload.sub: null,
       accessToken: state.auth.session !== null ? state.auth.session.accessToken.jwtToken: null,
       isFetching: state.profile.isFetching,

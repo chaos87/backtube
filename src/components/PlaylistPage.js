@@ -246,7 +246,7 @@ class PlaylistPage extends Component {
           swipeable: true,
           editing: false,
           fade: false,
-          private: false,
+          private: true,
           themes: [],
           open: false
       };
@@ -726,7 +726,7 @@ class PlaylistPage extends Component {
                      </Typography>
 
                          <Grid container alignItems="center" justify="center" direction="column">
-                              {this.state.editing && <FormControlLabel
+                              {this.state.editing && this.state.tracks.length > 2 && <FormControlLabel
                                  control={
                                    <Checkbox
                                      checked={this.state.private}
