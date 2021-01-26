@@ -63,6 +63,8 @@ const styles = theme => ({
   },
   button: {
       color: 'white',
+      minWidth: 200,
+      margin: theme.spacing(2)
   },
   titleLink: {
       textDecoration: 'none'
@@ -70,6 +72,15 @@ const styles = theme => ({
   cta: {
       paddingTop: theme.spacing(2)
   },
+  boxButton: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      [theme.breakpoints.only('xs')]: {
+          flexDirection: 'column',
+      },
+  }
 });
 
 class Home extends React.Component {
@@ -136,7 +147,53 @@ class Home extends React.Component {
                       .
                     </Typography>
                 </Container>
-
+                <Box p={3} className={classes.boxButton}>
+                     <FlexiLink
+                         isLoggedIn={this.props.isLoggedIn}
+                         to={{
+                            pathname: '/theme/cannotShareUrl',
+                            theme: {
+                                title: "Untitled theme #" + (this.props.themes.length + 1),
+                                creator: {username: this.props.profile.username, _id: this.props.userid, avatar: this.props.profile.avatar},
+                                playlists: [],
+                                description: '',
+                            },
+                            editing: true,
+                          }}
+                          className={classes.titleLink}
+                         >
+                         <Fab
+                           variant="extended"
+                           color="secondary"
+                           className={classes.button}
+                         >
+                          <AddIcon /> Create Theme
+                         </Fab>
+                     </FlexiLink>
+                     <FlexiLink
+                          isLoggedIn={this.props.isLoggedIn}
+                          to={{
+                             pathname: '/playlist/cannotShareUrl',
+                             playlist: {
+                                 title: "Untitled playlist #" + (this.props.owned.length + 1),
+                                 creator: {username: this.props.profile.username, _id: this.props.userid, avatar: this.props.profile.avatar},
+                                 tracks: [],
+                                 review: '',
+                             },
+                             source: 'owned',
+                             editing: true,
+                         }}
+                         className={classes.titleLink}
+                          >
+                          <Fab
+                            variant="extended"
+                            color="secondary"
+                            className={classes.button}
+                          >
+                            <AddIcon /> Create Playlist
+                          </Fab>
+                      </FlexiLink>
+                </Box>
                 <Box p={3} style={{paddingTop: 48, paddingBottom: 12}}>
                   <GridThemes
                       themeLists={{'New Themes': this.props.themes}}
@@ -145,28 +202,6 @@ class Home extends React.Component {
                       loadThemeOnClick={false}
                     />
                 </Box>
-                <FlexiLink
-                    isLoggedIn={this.props.isLoggedIn}
-                    to={{
-                       pathname: '/theme/cannotShareUrl',
-                       theme: {
-                           title: "Untitled theme #" + (this.props.themes.length + 1),
-                           creator: {username: this.props.profile.username, _id: this.props.userid, avatar: this.props.profile.avatar},
-                           playlists: [],
-                           description: '',
-                       },
-                       editing: true,
-                     }}
-                     className={classes.titleLink}
-                    >
-                    <Fab
-                      variant="extended"
-                      color="secondary"
-                      className={classes.button}
-                    >
-                     <AddIcon /> Create Theme
-                 </Fab>
-             </FlexiLink>
                 <Box p={3} style={{paddingTop: 48, paddingBottom: 12}}>
                   <GridPlaylists
                       playlistLists={{'New Playlists': this.props.playlists}}
@@ -175,29 +210,6 @@ class Home extends React.Component {
                       row={true}
                     />
                 </Box>
-                <FlexiLink
-                    isLoggedIn={this.props.isLoggedIn}
-                    to={{
-                       pathname: '/playlist/cannotShareUrl',
-                       playlist: {
-                           title: "Untitled playlist #" + (this.props.owned.length + 1),
-                           creator: {username: this.props.profile.username, _id: this.props.userid, avatar: this.props.profile.avatar},
-                           tracks: [],
-                           review: '',
-                       },
-                       source: 'owned',
-                       editing: true,
-                   }}
-                   className={classes.titleLink}
-                    >
-                    <Fab
-                      variant="extended"
-                      color="secondary"
-                      className={classes.button}
-                    >
-                     <AddIcon /> Create Playlist
-                 </Fab>
-             </FlexiLink>
               </Container>
             </div>
 
