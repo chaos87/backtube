@@ -1,4 +1,4 @@
-import { baseURL, streamingURL, ytURL } from '../config/urls';
+import { baseURL, ytURL, bandcampURL } from '../config/urls';
 import { pad } from '../services/utils';
 import { addMosaicToObject } from '../services/utils';
 
@@ -19,7 +19,7 @@ export const makeYoutubeSearchApiCall = async searchInput => {
 };
 
 export const makeBandcampSearchApiCall = async searchInput => {
-  const searchUrl = streamingURL + `/bandcamp/search`;
+  const searchUrl = bandcampURL + `/bandcamp/search`;
   let response = await fetch(searchUrl, {method: 'POST',
           headers: {
               'Content-Type': 'application/json'
@@ -32,23 +32,23 @@ export const makeBandcampSearchApiCall = async searchInput => {
       });
 
   const uniqueObjects = [...new Map(response.map(item => [item.url, item])).values()]
-  const tmpArtistAlbums = await searchBCartistAlbums(streamingURL, uniqueObjects.filter(x => x.type === "artist").map(x => x.url));
+  const tmpArtistAlbums = await searchBCartistAlbums(bandcampURL, uniqueObjects.filter(x => x.type === "artist").map(x => x.url));
   const artistAlbums = tmpArtistAlbums.flat().filter(x => !x.includes('?action=download'));
   const nearlyAllAlbums = artistAlbums.concat(uniqueObjects.filter(x => x.type === "album").map(x => x.url));
-  const trackAlbums = await searchBCtrack4Album(streamingURL, nearlyAllAlbums.filter(x => x.includes('/track/')));
+  const trackAlbums = await searchBCtrack4Album(bandcampURL, nearlyAllAlbums.filter(x => x.includes('/track/')));
   const allAlbumsDuplicated = nearlyAllAlbums.filter(x => !x.includes('/track/')).concat(trackAlbums.filter(x => x));
   const allAlbums = [...new Set(allAlbumsDuplicated)];
-  const results = await searchBCalbumDetails(streamingURL, allAlbums);
+  const results = await searchBCalbumDetails(bandcampURL, allAlbums);
   return {
           albums: results.filter(x => x).filter(x => x.tracks.length > 0)
       };
 };
 
-const searchBCalbumDetails = (streamingURL, url) => {
+const searchBCalbumDetails = (bandcampURL, url) => {
   const fetches = [];
   for (let i = 0; i < url.length; i++) {
     fetches.push(
-      fetch(streamingURL + '/bandcamp/songs', {
+      fetch(bandcampURL + '/bandcamp/songs', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json'
@@ -84,11 +84,11 @@ const searchBCalbumDetails = (streamingURL, url) => {
  return Promise.all(fetches)
 }
 
-const searchBCtrack4Album = (streamingURL, url) => {
+const searchBCtrack4Album = (bandcampURL, url) => {
   const fetches = [];
   for (let i = 0; i < url.length; i++) {
     fetches.push(
-      fetch(streamingURL + '/bandcamp/songs', {
+      fetch(bandcampURL + '/bandcamp/songs', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json'
@@ -105,11 +105,11 @@ const searchBCtrack4Album = (streamingURL, url) => {
  return Promise.all(fetches)
 }
 
-const searchBCartistAlbums = async (streamingURL, artists) => {
+const searchBCartistAlbums = async (bandcampURL, artists) => {
   const fetches = [];
   for (let i = 0; i < artists.length; i++) {
     fetches.push(
-      fetch(streamingURL + '/bandcamp/albums', {
+      fetch(bandcampURL + '/bandcamp/albums', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json'
