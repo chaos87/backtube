@@ -333,7 +333,13 @@ class GridPlaylists extends Component {
                                           </CardActionArea>
                                           <div className={classes.cardBottom}>
                                                <CardContent className={classes.content}>
-                                                   <Link to={{ pathname: `/playlist/${elem._id}`}} className={classes.link}>
+                                                   <Link
+                                                       to={{
+                                                           pathname: ['backtube', 'owned', 'followed'].includes(this.props.source) ? `/playlist/${elem._id}` : `/playlist/cannotShareUrl`,
+                                                           playlist: elem,
+                                                           source: this.props.source,
+                                                       }}
+                                                       className={classes.link}>
                                                        <Typography noWrap variant="subtitle1" component="h1" align="left" className={classes.title}>
                                                          {elem.title}
                                                        </Typography>
