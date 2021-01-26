@@ -2,8 +2,6 @@ import {
     PLAYER_ADD_SINGLE_SONG_BEFORE,
     PLAYER_ADD_SONG,
     PLAYER_ADD_SINGLE_SONG_AFTER,
-    PLAYER_ADD_MULTI_SONG_BEFORE,
-    PLAYER_ADD_MULTI_SONG_AFTER,
     PLAYER_SYNC_PLAYLIST,
     PLAYER_SYNC_CURRENT_SONG,
     PLAYER_CLEAR_SONGS,
@@ -42,19 +40,6 @@ export default function playerReducer(state = initialState, action) {
             ...state,
             addLoading: false,
             clearPriorAudioLists: true,
-        };
-    case PLAYER_ADD_MULTI_SONG_BEFORE:
-        return {
-            ...state,
-            addLoading: true,
-            itemAddedId: action.payload._id,
-            clearPriorAudioLists: false
-        };
-    case PLAYER_ADD_MULTI_SONG_AFTER:
-        return {
-            ...state,
-            addLoading: false,
-            clearPriorAudioLists: true
         };
     case PLAYER_SYNC_PLAYLIST:
         return {

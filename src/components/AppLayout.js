@@ -111,10 +111,10 @@ class AppLayout extends React.Component {
       const { classes } = this.props;
       const initOptions = {
             //audio lists model
-            clearPriorAudioLists: this.props.clearPriorAudioLists,
+            clearPriorAudioLists: true,
             toggleMode: true,
             preload: false,
-            autoPlay: false,
+            autoPlay: true,
             showDownload: false,
             showThemeSwitch: false,
             showPlayMode: true,
@@ -123,10 +123,10 @@ class AppLayout extends React.Component {
             loadAudioErrorPlayNext: false,
             autoPlayInitLoadPlayList: true,
             quietUpdate: true,
-            seeked: false,
+            seeked: true,
             defaultPosition: {bottom:0,right:0},
             getAudioInstance: (audio) => {
-            this.audio = audio
+                this.audio = audio
             },
       }
       return (

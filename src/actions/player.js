@@ -2,8 +2,6 @@ import {
     PLAYER_ADD_SINGLE_SONG_BEFORE,
     PLAYER_ADD_SONG,
     PLAYER_ADD_SINGLE_SONG_AFTER,
-    PLAYER_ADD_MULTI_SONG_BEFORE,
-    PLAYER_ADD_MULTI_SONG_AFTER,
     PLAYER_SYNC_PLAYLIST,
     PLAYER_SYNC_CURRENT_SONG,
     PLAYER_CLEAR_SONGS,
@@ -35,8 +33,6 @@ export function addMultipleSong(event, source, cover, singer, clear) {
         if (clear) {
             dispatch({ type: PLAYER_CLEAR_SONGS });
         }
-        // before
-        dispatch({type: PLAYER_ADD_MULTI_SONG_BEFORE, source: source, payload: event});
         // doing
         const audioLists = event.tracks.map(el =>
             prepareAudioList(
@@ -49,8 +45,6 @@ export function addMultipleSong(event, source, cover, singer, clear) {
             )
         )
         dispatch({type: PLAYER_ADD_SONG, payload: audioLists})
-        // after
-        dispatch({type: PLAYER_ADD_MULTI_SONG_AFTER})
     }
 }
 
