@@ -201,11 +201,11 @@ class GridThemes extends Component {
             </Container>}
             {!this.props.loading && Object.keys(this.props.themeLists).map((item, i) => (
                 <div key={item} className={classes.rowContainer}>
-                    <div>
+                    {this.props.row && <div>
                         <IconButton title="Scroll left" onClick={() => this.handleScroll('left')} className={classes.buttonScroll}>
                             <ArrowBackIosIcon color="secondary"/>
                         </IconButton>
-                    </div>
+                    </div>}
                     <RootRef rootRef={this.gridRef}>
                         <TabPanel value={this.props.subTab} className={this.props.row ? classes.rootRow : classes.root} index={i} key={item}>
                             <Grid container direction="row" className={this.props.row ? classes.gridListRow : classes.gridList} spacing={2}>
@@ -252,11 +252,11 @@ class GridThemes extends Component {
                            </Grid>
                        </TabPanel>
                  </RootRef>
-                 <div>
+                 {this.props.row && <div>
                      <IconButton title="Scroll right" onClick={() => this.handleScroll('right')} className={classes.buttonScroll}>
                          <ArrowForwardIosIcon color="secondary"/>
                      </IconButton>
-                 </div>
+                 </div>}
              </div>)
              )}
     </React.Fragment>
