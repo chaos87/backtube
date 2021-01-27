@@ -19,6 +19,9 @@ import Fab from '@material-ui/core/Fab';
 import Typography from '@material-ui/core/Typography';
 import { updateProfile, readProfile, getCurrentProfile } from '../actions/profile';
 import { hitApi } from '../actions/helloWorld';
+import { disableSearch } from '../actions/search';
+import { disableHome } from '../actions/home';
+import { disableLibrary } from '../actions/library';
 import { MixPanel } from './MixPanel';
 import { withLastLocation } from 'react-router-last-location';
 import GridPlaylists from "./GridPlaylists";
@@ -192,6 +195,20 @@ class Profile extends React.Component {
 
     handleGoBack = () => {
         this.props.history.goBack();
+        if (
+            this.props.lastLocation.pathname.startsWith('/results')
+          ) {
+            this.props.disableSearch();
+        }
+        if (this.props.lastLocation.pathname === '/'
+          ){
+            this.props.disableHome();
+        }
+        if (
+            this.props.lastLocation.pathname === '/library'
+            ){
+                this.props.disableLibrary();
+            }
     }
 
     render(){
@@ -315,6 +332,9 @@ const mapDispatchToProps = dispatch => {
     read: userInfo => dispatch(readProfile(userInfo)),
     getCurrentProfile: userInfo => dispatch(getCurrentProfile(userInfo)),
     hitApi: token => dispatch(hitApi(token)),
+    disableSearch: () => dispatch(disableSearch()),
+    disableHome: () => dispatch(disableHome()),
+    disableLibrary: () => dispatch(disableLibrary()),
   };
 }
 

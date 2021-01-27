@@ -7,6 +7,8 @@ import Avatar from '@material-ui/core/Avatar';
 import DeleteIcon from '@material-ui/icons/Delete';
 import PauseIcon from '@material-ui/icons/Pause';
 import IconButton from '@material-ui/core/IconButton';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import QueueMusicIcon from '@material-ui/icons/QueueMusic';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import PropTypes from 'prop-types';
@@ -30,6 +32,7 @@ import { Link } from 'react-router-dom';
 import { AudioContext } from './AppLayout';
 import { addMultipleSong } from '../actions/player';
 import { setSubTab } from '../actions/nav';
+import RootRef from '@material-ui/core/RootRef';
 
 const styles = theme => ({
     root: {
@@ -160,6 +163,17 @@ const styles = theme => ({
         "&:hover": {
             textDecoration: 'underline'
         }
+    },
+    rowContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    buttonScroll: {
+        [theme.breakpoints.only('xs')]: {
+            paddingLeft: 0,
+            paddingRight: 0
+        },
     }
 });
 
@@ -207,6 +221,8 @@ class GridPlaylists extends Component {
           cover: null,
           disabled: false,
       };
+      // React Ref is created here
+      this.gridRef = React.createRef();
   }
 
   handleChange = (event, newValue) => {
@@ -248,6 +264,15 @@ class GridPlaylists extends Component {
       })
   }
 
+  handleScroll = (direction) => {
+    if (direction === 'left' && this.gridRef) {
+      this.gridRef.current.scrollLeft -= 255;
+    }
+    if (direction === 'right' && this.gridRef) {
+      this.gridRef.current.scrollLeft += 255;
+    }
+  }
+
   render(){
       const { classes } = this.props;
       return (
@@ -282,108 +307,122 @@ class GridPlaylists extends Component {
                 <CircularProgress color="secondary" />
             </Container>}
             {!this.props.loading && Object.keys(this.props.playlistLists).map((item, i) => (
-                <TabPanel value={this.props.subTab} className={this.props.row ? classes.rootRow : classes.root} index={i} key={item}>
-                    <Grid container direction="row" className={this.props.row ? classes.gridListRow : classes.gridList} spacing={2}>
-                       {item in this.props.playlistLists && this.props.playlistLists[item] && this.props.playlistLists[item].map(elem => (
-                                 <Grid item xs={12} sm={6} md={this.props.row ? 12 : 3} key={elem._id}>
-                                     <Card className={this.props.row ? classes.cardClassRow : classes.cardClass}>
-                                         <CardActionArea
-                                             component={Link}
-                                             to={{
-                                                pathname: ['backtube', 'owned', 'followed'].includes(this.props.source) ? `/playlist/${elem._id}` : `/playlist/cannotShareUrl`,
-                                                playlist: elem,
-                                                source: this.props.source,
-                                            }}
-                                            disableRipple={this.state.disabled}
-                                            classes={{
-                                              root: classes.cardActionArea,
-                                              focusHighlight: classes.cardFocus
-                                            }}
-                                         >
-                                          {elem.thumbnail ? <CardMedia
-                                             className={classes.media}
-                                             image={elem.thumbnail}
-                                             title={elem.title}
-                                         /> : 'mosaic' in elem && elem.mosaic.length < 4 && elem.mosaic.length > 0 ?
-                                         <CardMedia
-                                            className={classes.media}
-                                            image={elem.mosaic[0].thumbnail}
-                                            title={elem.title}
-                                        /> : 'mosaic' in elem && elem.mosaic.length > 0 ?
-                                           <GridList cellHeight={120} cols={2}>
-                                              {elem.mosaic.map(tile => (
-                                                <GridListTile key={tile._id} cols={1}>
-                                                  <img src={tile.thumbnail} alt={tile.title} />
-                                                </GridListTile>
-                                              ))}
-                                          </GridList>
-                                        : <QueueMusicIcon color="primary" className={classes.albumIcon}/>}
-                                          <Fab
-                                              size="medium"
-                                              color="secondary"
-                                              className={this.props.currentTrack.playing && this.props.currentTrack.playlistId === elem._id ? classes.iconPlayVisible : classes.iconPlay}
-                                              name="playIcon"
-                                              onClick={(e) => this.handlePlayFromButton(e, elem, this.props.source)}
-                                              onMouseEnter={this.onMouseEnter}
-                                              onMouseLeave={this.onMouseLeave}
-                                          >
-                                              {this.props.currentTrack.playing && this.props.currentTrack.playlistId === elem._id ?
-                                                  <PauseIcon fontSize="default"/> : <PlayArrowIcon fontSize="default"/>}
-                                          </Fab>
-                                          </CardActionArea>
-                                          <div className={classes.cardBottom}>
-                                               <CardContent className={classes.content}>
-                                                   <Link
-                                                       to={{
-                                                           pathname: ['backtube', 'owned', 'followed'].includes(this.props.source) ? `/playlist/${elem._id}` : `/playlist/cannotShareUrl`,
-                                                           playlist: elem,
-                                                           source: this.props.source,
-                                                       }}
-                                                       className={classes.link}>
-                                                       <Typography noWrap variant="subtitle1" component="h1" align="left" className={classes.title}>
-                                                         {elem.title}
-                                                       </Typography>
-                                                   </Link>
-                                                   {elem.artist ?
-                                                       <Typography noWrap variant="body1" align="left" component="h2">
-                                                         {elem.artist}
-                                                       </Typography>
-                                                      :
-                                                       <Grid container spacing={5} justify="flex-start" direction="row" className={classes.gridInfo}>
-                                                           <div className={classes.creatorContainer}>
-                                                               <Link to={{ pathname: `/profile/${elem.creator._id}`}} className={classes.link}>
-                                                                   <Typography noWrap variant="subtitle1" className={classes.subtitleCreator}>
-                                                                     by {elem.creator.username}
-                                                                   </Typography>
-                                                               </Link>
-                                                           </div>
-                                                           <Link to={{ pathname: `/profile/${elem.creator._id}`}} className={classes.link}>
-                                                               <Avatar
-                                                                  alt={elem.creator.username}
-                                                                  src={elem.creator.avatar}
-                                                                  title={elem.creator.username}
-                                                                  aria-label="open account menu"
-                                                                  className={classes.avatar}
-                                                                >
-                                                              </Avatar>
-                                                          </Link>
-                                                      </Grid>
-                                                     }
-                                               </CardContent>
-                                               {this.props.source === 'owned' && <CardActions>
-                                                   <ModalLink to={this.props.isLoggedIn ? `/deletePlaylist/${elem._id}`: '/login'}>
-                                                       <IconButton title="Delete playlist">
-                                                           <DeleteIcon />
-                                                       </IconButton>
-                                                   </ModalLink>
-                                               </CardActions>}
-                                          </div>
-                                     </Card>
-                                  </Grid>
-                             ))}
-                   </Grid>
-             </TabPanel>)
-             )}
+                <div key={item} className={classes.rowContainer}>
+                    <div>
+                        <IconButton title="Scroll left" onClick={() => this.handleScroll('left')} className={classes.buttonScroll}>
+                            <ArrowBackIosIcon color="secondary"/>
+                        </IconButton>
+                    </div>
+                    <RootRef rootRef={this.gridRef}>
+                        <TabPanel value={this.props.subTab} className={this.props.row ? classes.rootRow : classes.root} index={i} key={item}>
+                            <Grid container direction="row" className={this.props.row ? classes.gridListRow : classes.gridList} spacing={2}>
+                               {item in this.props.playlistLists && this.props.playlistLists[item] && this.props.playlistLists[item].map(elem => (
+                                         <Grid item xs={12} sm={6} md={this.props.row ? 12 : 3} key={elem._id}>
+                                             <Card className={this.props.row ? classes.cardClassRow : classes.cardClass}>
+                                                 <CardActionArea
+                                                     component={Link}
+                                                     to={{
+                                                        pathname: ['backtube', 'owned', 'followed'].includes(this.props.source) ? `/playlist/${elem._id}` : `/playlist/cannotShareUrl`,
+                                                        playlist: elem,
+                                                        source: this.props.source,
+                                                    }}
+                                                    disableRipple={this.state.disabled}
+                                                    classes={{
+                                                      root: classes.cardActionArea,
+                                                      focusHighlight: classes.cardFocus
+                                                    }}
+                                                 >
+                                                  {elem.thumbnail ? <CardMedia
+                                                     className={classes.media}
+                                                     image={elem.thumbnail}
+                                                     title={elem.title}
+                                                 /> : 'mosaic' in elem && elem.mosaic.length < 4 && elem.mosaic.length > 0 ?
+                                                 <CardMedia
+                                                    className={classes.media}
+                                                    image={elem.mosaic[0].thumbnail}
+                                                    title={elem.title}
+                                                /> : 'mosaic' in elem && elem.mosaic.length > 0 ?
+                                                   <GridList cellHeight={120} cols={2}>
+                                                      {elem.mosaic.map(tile => (
+                                                        <GridListTile key={tile._id} cols={1}>
+                                                          <img src={tile.thumbnail} alt={tile.title} />
+                                                        </GridListTile>
+                                                      ))}
+                                                  </GridList>
+                                                : <QueueMusicIcon color="primary" className={classes.albumIcon}/>}
+                                                  <Fab
+                                                      size="medium"
+                                                      color="secondary"
+                                                      className={this.props.currentTrack.playing && this.props.currentTrack.playlistId === elem._id ? classes.iconPlayVisible : classes.iconPlay}
+                                                      name="playIcon"
+                                                      onClick={(e) => this.handlePlayFromButton(e, elem, this.props.source)}
+                                                      onMouseEnter={this.onMouseEnter}
+                                                      onMouseLeave={this.onMouseLeave}
+                                                  >
+                                                      {this.props.currentTrack.playing && this.props.currentTrack.playlistId === elem._id ?
+                                                          <PauseIcon fontSize="default"/> : <PlayArrowIcon fontSize="default"/>}
+                                                  </Fab>
+                                                  </CardActionArea>
+                                                  <div className={classes.cardBottom}>
+                                                       <CardContent className={classes.content}>
+                                                           <Link
+                                                               to={{
+                                                                   pathname: ['backtube', 'owned', 'followed'].includes(this.props.source) ? `/playlist/${elem._id}` : `/playlist/cannotShareUrl`,
+                                                                   playlist: elem,
+                                                                   source: this.props.source,
+                                                               }}
+                                                               className={classes.link}>
+                                                               <Typography noWrap variant="subtitle1" component="h1" align="left" className={classes.title}>
+                                                                 {elem.title}
+                                                               </Typography>
+                                                           </Link>
+                                                           {elem.artist ?
+                                                               <Typography noWrap variant="body1" align="left" component="h2">
+                                                                 {elem.artist}
+                                                               </Typography>
+                                                              :
+                                                               <Grid container spacing={5} justify="flex-start" direction="row" className={classes.gridInfo}>
+                                                                   <div className={classes.creatorContainer}>
+                                                                       <Link to={{ pathname: `/profile/${elem.creator._id}`}} className={classes.link}>
+                                                                           <Typography noWrap variant="subtitle1" className={classes.subtitleCreator}>
+                                                                             by {elem.creator.username}
+                                                                           </Typography>
+                                                                       </Link>
+                                                                   </div>
+                                                                   <Link to={{ pathname: `/profile/${elem.creator._id}`}} className={classes.link}>
+                                                                       <Avatar
+                                                                          alt={elem.creator.username}
+                                                                          src={elem.creator.avatar}
+                                                                          title={elem.creator.username}
+                                                                          aria-label="open account menu"
+                                                                          className={classes.avatar}
+                                                                        >
+                                                                      </Avatar>
+                                                                  </Link>
+                                                              </Grid>
+                                                             }
+                                                       </CardContent>
+                                                       {this.props.source === 'owned' && <CardActions>
+                                                           <ModalLink to={this.props.isLoggedIn ? `/deletePlaylist/${elem._id}`: '/login'}>
+                                                               <IconButton title="Delete playlist">
+                                                                   <DeleteIcon />
+                                                               </IconButton>
+                                                           </ModalLink>
+                                                       </CardActions>}
+                                                  </div>
+                                             </Card>
+                                          </Grid>
+                                     ))}
+                           </Grid>
+                       </TabPanel>
+                 </RootRef>
+                 <div>
+                     <IconButton title="Scroll right" onClick={() => this.handleScroll('right')} className={classes.buttonScroll}>
+                         <ArrowForwardIosIcon color="secondary"/>
+                     </IconButton>
+                 </div>
+            </div>)
+                 )}
     </React.Fragment>
       );
     }

@@ -3,7 +3,10 @@ import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import {withRouter} from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
+import IconButton from '@material-ui/core/IconButton';
 import QueueMusicIcon from '@material-ui/icons/QueueMusic';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
@@ -19,6 +22,7 @@ import Container from '@material-ui/core/Container';
 import { Link } from 'react-router-dom';
 import { setSubTab } from '../actions/nav';
 import Badge from '@material-ui/core/Badge';
+import RootRef from '@material-ui/core/RootRef';
 
 const styles = theme => ({
     root: {
@@ -54,7 +58,7 @@ const styles = theme => ({
     },
     cardClassRow: {
         height: "100%",
-        maxWidth: 360,
+        width: 360,
         backgroundColor: theme.palette.primary.main
     },
     box: {
@@ -87,6 +91,17 @@ const styles = theme => ({
     },
     badge: {
         color: "white"
+    },
+    rowContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    buttonScroll: {
+        [theme.breakpoints.only('xs')]: {
+            paddingLeft: 0,
+            paddingRight: 0
+        },
     }
 });
 
@@ -134,10 +149,21 @@ class GridThemes extends Component {
           cover: null,
           disabled: false,
       };
+      // React Ref is created here
+      this.gridRef = React.createRef();
   }
 
   handleChange = (event, newValue) => {
       this.props.setSubTab(newValue)
+  }
+
+  handleScroll = (direction) => {
+    if (direction === 'left' && this.gridRef) {
+      this.gridRef.current.scrollLeft -= 360;
+    }
+    if (direction === 'right' && this.gridRef) {
+      this.gridRef.current.scrollLeft += 360;
+    }
   }
 
   render(){
@@ -164,7 +190,7 @@ class GridThemes extends Component {
                   variant={Object.keys(this.props.themeLists)[0] === 'Themes' ? 'h5' : 'h4'}
                   color="primary"
                   component="h1"
-                  align="left" 
+                  align="left"
                   className={classes.titleSection}
               >
                 {Object.keys(this.props.themeLists)[0]}
@@ -174,50 +200,64 @@ class GridThemes extends Component {
                 <CircularProgress color="secondary" />
             </Container>}
             {!this.props.loading && Object.keys(this.props.themeLists).map((item, i) => (
-                <TabPanel value={this.props.subTab} className={this.props.row ? classes.rootRow : classes.root} index={i} key={item}>
-                    <Grid container direction="row" className={this.props.row ? classes.gridListRow : classes.gridList} spacing={2}>
-                       {item in this.props.themeLists && this.props.themeLists[item] && this.props.themeLists[item].map(elem => (
-                                 <Grid item xs={12} sm={6} md={6} key={elem._id} className={classes.gridItem}>
-                                     <Card className={this.props.row ? classes.cardClassRow : classes.cardClass}>
-                                         <CardActionArea
-                                             component={Link}
-                                             to={{
-                                                pathname: `/theme/${elem._id}`,
-                                                theme: this.props.loadThemeOnClick ? null : elem,
-                                            }}
-                                            disableRipple={this.state.disabled}
-                                         >
-                                           <CardContent className={classes.content}>
-                                               <div className={classes.titleContainer}>
-                                                   <Typography noWrap variant="subtitle1" component="h1" align="left" className={classes.title}>
-                                                     {elem.title}
-                                                   </Typography>
-                                               </div>
-                                                <Grid container justify="flex-end" alignItems="center" direction="row" className={classes.gridInfo}>
-                                                    <Grid container justify="flex-start" alignItems="center" direction="row">
-                                                        <Typography variant="subtitle1" className={classes.subtitleCreator}>
-                                                          by {elem.creator.username}
-                                                        </Typography>
-                                                        <Avatar
-                                                           alt={elem.creator.username}
-                                                           src={elem.creator.avatar}
-                                                           title={elem.creator.username}
-                                                           aria-label="open account menu"
-                                                           className={classes.avatar}
-                                                         >
-                                                       </Avatar>
-                                                   </Grid>
-                                                   <Badge color="secondary" badgeContent={elem.playlists.length} showZero classes={{ badge: classes.badge}} >
-                                                       <QueueMusicIcon fontSize="large" className={classes.themeIcon}/>
-                                                   </Badge>
-                                               </Grid>
-                                           </CardContent>
-                                        </CardActionArea>
-                                     </Card>
-                                  </Grid>
-                             ))}
-                   </Grid>
-             </TabPanel>)
+                <div key={item} className={classes.rowContainer}>
+                    <div>
+                        <IconButton title="Scroll left" onClick={() => this.handleScroll('left')} className={classes.buttonScroll}>
+                            <ArrowBackIosIcon color="secondary"/>
+                        </IconButton>
+                    </div>
+                    <RootRef rootRef={this.gridRef}>
+                        <TabPanel value={this.props.subTab} className={this.props.row ? classes.rootRow : classes.root} index={i} key={item}>
+                            <Grid container direction="row" className={this.props.row ? classes.gridListRow : classes.gridList} spacing={2}>
+                               {item in this.props.themeLists && this.props.themeLists[item] && this.props.themeLists[item].map(elem => (
+                                         <Grid item xs={12} sm={6} md={6} key={elem._id} className={classes.gridItem}>
+                                             <Card className={this.props.row ? classes.cardClassRow : classes.cardClass}>
+                                                 <CardActionArea
+                                                     component={Link}
+                                                     to={{
+                                                        pathname: `/theme/${elem._id}`,
+                                                        theme: this.props.loadThemeOnClick ? null : elem,
+                                                    }}
+                                                    disableRipple={this.state.disabled}
+                                                 >
+                                                   <CardContent className={classes.content}>
+                                                       <div className={classes.titleContainer}>
+                                                           <Typography noWrap variant="subtitle1" component="h1" align="left" className={classes.title}>
+                                                             {elem.title}
+                                                           </Typography>
+                                                       </div>
+                                                        <Grid container justify="flex-end" alignItems="center" direction="row" className={classes.gridInfo}>
+                                                            <Grid container justify="flex-start" alignItems="center" direction="row">
+                                                                <Typography variant="subtitle1" className={classes.subtitleCreator}>
+                                                                  by {elem.creator.username}
+                                                                </Typography>
+                                                                <Avatar
+                                                                   alt={elem.creator.username}
+                                                                   src={elem.creator.avatar}
+                                                                   title={elem.creator.username}
+                                                                   aria-label="open account menu"
+                                                                   className={classes.avatar}
+                                                                 >
+                                                               </Avatar>
+                                                           </Grid>
+                                                           <Badge color="secondary" badgeContent={elem.playlists.length} showZero classes={{ badge: classes.badge}} >
+                                                               <QueueMusicIcon fontSize="large" className={classes.themeIcon}/>
+                                                           </Badge>
+                                                       </Grid>
+                                                   </CardContent>
+                                                </CardActionArea>
+                                             </Card>
+                                          </Grid>
+                                     ))}
+                           </Grid>
+                       </TabPanel>
+                 </RootRef>
+                 <div>
+                     <IconButton title="Scroll right" onClick={() => this.handleScroll('right')} className={classes.buttonScroll}>
+                         <ArrowForwardIosIcon color="secondary"/>
+                     </IconButton>
+                 </div>
+             </div>)
              )}
     </React.Fragment>
       );
