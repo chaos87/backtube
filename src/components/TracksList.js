@@ -64,6 +64,9 @@ const styles = (theme) => ({
     [theme.breakpoints.between(550, 600)]: {
       maxWidth: '35vh'
     },
+    [theme.breakpoints.up('lg')]: {
+      maxWidth: '35vh'
+    },
   },
   textPlaying: {
     color: theme.palette.secondary.main,
@@ -90,6 +93,9 @@ const styles = (theme) => ({
     [theme.breakpoints.between(550, 600)]: {
       maxWidth: '35vh'
     },
+    [theme.breakpoints.up('lg')]: {
+      maxWidth: '35vh'
+    },
   },
   cardClass: {
       flexGrow: 1,
@@ -112,9 +118,6 @@ const styles = (theme) => ({
   list:{
       width: "100%",
       maxWidth: 700,
-      [theme.breakpoints.up('lg')]: {
-        width: "90%",
-      },
   },
   duration: {
       [theme.breakpoints.down('xs')]: {
@@ -136,6 +139,9 @@ const styles = (theme) => ({
       direction: 'column',
       justifyContent: 'center',
       alignItems: 'center',
+  },
+  icon: {
+      minWidth: 48
   },
   link: {},
   disableLink: {
