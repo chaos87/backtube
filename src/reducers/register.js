@@ -18,7 +18,8 @@ const initialState = {
   isConfirmFetching: false,
   isResendFetching: false,
   error: null,
-  username: null
+  username: null,
+  disabled: false,
 }
 
 const registerReducer = (state = initialState, action) => {
@@ -47,7 +48,8 @@ const registerReducer = (state = initialState, action) => {
         isFetching: false,
         isRegistered: true,
         isConfirmed: false,
-        error: null
+        error: null,
+        disabled: true,
     }
     case CONFIRMATION_STARTED:
       return {
@@ -61,7 +63,8 @@ const registerReducer = (state = initialState, action) => {
         ...state,
         isConfirmFetching: false,
         isConfirmed: true,
-        error: null
+        error: null,
+        disabled: false,
     }
     case CONFIRMATION_FAILED:
       return {

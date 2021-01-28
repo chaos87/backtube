@@ -74,6 +74,9 @@ class SignUp extends Component {
 
     componentDidMount() {
         MixPanel.track('View Sign Up');
+        if (this.props.reg.isRegistered && !this.props.reg.isConfirmed) {
+            setTimeout(function () { this.props.history.push('/confirm'); }.bind(this), 1000);
+        }
     }
 
     handleSubmit = (event) => {

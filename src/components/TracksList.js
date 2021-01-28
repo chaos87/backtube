@@ -43,17 +43,8 @@ const styles = (theme) => ({
   },
   text: {
     maxWidth: '40vh',
-    [theme.breakpoints.between(340, 365)]: {
-      maxWidth: '12vh'
-    },
-    [theme.breakpoints.between(365, 400)]: {
-      maxWidth: '15vh'
-    },
-    [theme.breakpoints.between(400, 425)]: {
-      maxWidth: '18vh'
-    },
-    [theme.breakpoints.between(425, 450)]: {
-      maxWidth: '20vh'
+    [theme.breakpoints.between(0, 450)]: {
+      maxWidth: '22vh'
     },
     [theme.breakpoints.between(450, 500)]: {
       maxWidth: '25vh'
@@ -191,7 +182,6 @@ onDragStart = () => {
 }
 
 render(){
-  console.log(this.props.track)
   const { classes } = this.props;
   return (
     <div className={classes.root}>

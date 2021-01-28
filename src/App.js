@@ -115,7 +115,11 @@ class App extends React.Component {
         <AppLayout>
             <ModalSwitch
                 renderModal={({ open, redirectToBack }) => (
-                  <MuiModal open={open} scroll="body" onExited={redirectToBack}>
+                  <MuiModal
+                      open={open}
+                      scroll="body"
+                      onExited={redirectToBack}
+                   >
                     {modalRoutes}
                   </MuiModal>
                 )}
