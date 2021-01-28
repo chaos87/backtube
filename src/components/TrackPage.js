@@ -33,6 +33,9 @@ import { disableCurrent, updatePlaylist, getPlaylists, mustReload } from '../act
 import { withLastLocation } from 'react-router-last-location';
 import { MixPanel } from './MixPanel';
 import ModalVideo from 'react-modal-video';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import FlexiLink from "./FlexiLink";
 
 const styles = theme => ({
   bar: {
@@ -113,6 +116,14 @@ const styles = theme => ({
       direction: 'column',
       justifyContent: 'center',
       alignItems: 'center',
+  },
+  button: {
+      color: 'white',
+      minWidth: 200,
+      margin: theme.spacing(2)
+  },
+  titleLink: {
+      textDecoration: 'none'
   },
 });
 
@@ -332,6 +343,34 @@ class TrackPage extends Component {
                           {this.props.isLoggedIn &&
                               <Collapse in={this.state.open} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
+                                    <ListItem
+                                      button
+                                      className={classes.nested}
+                                      >
+                                          <FlexiLink
+                                              isLoggedIn={this.props.isLoggedIn}
+                                              to={{
+                                                 pathname: '/playlist/cannotShareUrl',
+                                                 playlist: {
+                                                     title: "Untitled playlist #" + (this.props.owned.length + 1),
+                                                     creator: {username: this.props.profile.username, _id: this.props.userid, avatar: this.props.profile.avatar},
+                                                     tracks: [track],
+                                                     review: '',
+                                                 },
+                                                 source: 'owned',
+                                                 editing: true,
+                                             }}
+                                             className={classes.titleLink}
+                                              >
+                                              <Fab
+                                                variant="extended"
+                                                color="secondary"
+                                                className={classes.button}
+                                              >
+                                               <AddIcon /> Create Playlist
+                                           </Fab>
+                                       </FlexiLink>
+                                  </ListItem>
                                     {this.props.playlists.filter(el => el._id !== this.props.playlist._id).map(elem => (
                                         <ListItem
                                           key={elem._id}
@@ -408,6 +447,8 @@ function mapStateToProps(state, props) {
       playlist: state.playlist.playlistCurrent ? state.playlist.playlistCurrent: {creator: {username: ""}, tracks: []},
       queueLoading: state.player.addLoading,
       currentTrack: state.player.currentTrack ? state.player.currentTrack : '',
+      profile: state.profile.profile ? state.profile.profile : {username: "", avatar: "/broken-image.jpg"},
+      owned: state.playlist.playlistsOwned ? state.playlist.playlistsOwned: [],
   };
 }
 
