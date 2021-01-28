@@ -49,6 +49,8 @@ const styles = theme => ({
     },
     gridList: {
         marginRight: theme.spacing(1),
+        display: 'flex',
+        justifyContent: 'space-between',
     },
     gridListRow: {
         flexWrap: 'nowrap',
@@ -67,7 +69,11 @@ const styles = theme => ({
     },
     cardClass: {
         height: "100%",
-        width: "100%"
+        maxWidth: 300,
+        [theme.breakpoints.only('xs')]: {
+            maxWidth: 260,
+        },
+        minWidth: 240,
     },
     cardClassRow: {
         height: "100%",

@@ -53,6 +53,7 @@ class SideBar extends Component {
             MixPanel.track('View Give Feedback')
             window.open('https://forms.gle/NJNK7Y9JhXj8zWgL6');
         }
+        this.props.handleCloseSideBar()
     }
 render(){
     const { classes } = this.props;

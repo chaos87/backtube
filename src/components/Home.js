@@ -132,13 +132,13 @@ class Home extends React.Component {
                     <Typography gutterBottom variant="body1" component="h2">
                         Create playlist themes and contribute with your own playlists.
                     </Typography>
-                    <Typography variant="h6" component="h2" className={classes.cta}>
+                    {!this.props.isLoggedIn && <Typography variant="h6" component="h2" className={classes.cta}>
                       Don't have an account yet?
                       <ModalLink className={classes.link} to='/register'>
                         {"Register"}
                       </ModalLink>
                       !
-                    </Typography>
+                  </Typography>}
                     <Typography className={classes.form} gutterBottom variant="subtitle2" component="h2">
                       Found a bug? Want to suggest a feature or simply give some feedback? Much appreciated if you could fill the
                       <a target={'_blank'} rel="noopener noreferrer" className={classes.link} href='https://forms.gle/NJNK7Y9JhXj8zWgL6'>

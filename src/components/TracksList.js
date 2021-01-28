@@ -122,6 +122,10 @@ const styles = (theme) => ({
       },
       marginRight: theme.spacing(2)
   },
+  unavailable: {
+      color: 'red',
+      marginRight: theme.spacing(2)
+  },
   albumIcon: {
       fontSize: 30,
   },
@@ -133,6 +137,10 @@ const styles = (theme) => ({
       justifyContent: 'center',
       alignItems: 'center',
   },
+  link: {},
+  disableLink: {
+      pointerEvents: 'none'
+  }
 });
 
 // a little function to help us with reordering the result
@@ -177,6 +185,7 @@ onDragStart = () => {
 }
 
 render(){
+  console.log(this.props.track)
   const { classes } = this.props;
   return (
     <div className={classes.root}>
@@ -261,7 +270,7 @@ render(){
                                 <CardActionArea
                                     className={classes.cardClass}
                                     onClick={() => this.props.handlePlay(item)}
-                                    disabled={this.props.editing}
+                                    disabled={this.props.editing || item._id === 'da7a8f2c4db5582b80b7f0109daab672'}
                                 >
                                 {item.thumbnail ?
                                     <img
@@ -291,18 +300,27 @@ render(){
                                         {item.artist}
                                       </Typography>
                                     </div>
+                                    <div>
                                       <Typography noWrap className={classes.duration} variant="subtitle1" color="textSecondary">
                                          {msToTime(item.duration * 1000)}
                                       </Typography>
+                                      {item._id === 'da7a8f2c4db5582b80b7f0109daab672' &&
+                                      <Typography noWrap className={classes.unavailable} variant="caption">
+                                         Unavailable
+                                     </Typography>}
+                                  </div>
                               </CardContent>
                               </CardActionArea>
                               {!this.props.editing && <div className={classes.iconContainer}>
                                   <Link to={{
-                                    pathname: `/track/cannotShareUrl`,
-                                    track: item,
-                                    creator: this.props.creator
-                                  }}>
-                                      <IconButton className={classes.icon}>
+                                        pathname: `/track/cannotShareUrl`,
+                                        track: item,
+                                        creator: this.props.creator
+                                    }}
+                                    className={item._id === 'da7a8f2c4db5582b80b7f0109daab672' ? classes.disableLink : classes.link}
+                                  >
+
+                                      <IconButton className={classes.icon} disabled={item._id === 'da7a8f2c4db5582b80b7f0109daab672'}>
                                         <MoreVertIcon />
                                       </IconButton>
                                   </Link>
