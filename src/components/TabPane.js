@@ -70,6 +70,7 @@ const styles = theme => ({
   },
   container: {
       marginTop: theme.spacing(2),
+      marginBottom: theme.spacing(6)
   },
   button: {
       color: 'white',
