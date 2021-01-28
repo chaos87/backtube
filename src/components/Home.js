@@ -194,7 +194,7 @@ class Home extends React.Component {
                           </Fab>
                       </FlexiLink>
                 </Box>
-                <Box p={3} style={{paddingTop: 48, paddingBottom: 12}}>
+                <Box p={1} style={{paddingTop: 48, paddingBottom: 12}}>
                   <GridThemes
                       themeLists={{'New Themes': this.props.themes}}
                       loading={this.props.loading}
@@ -202,7 +202,7 @@ class Home extends React.Component {
                       loadThemeOnClick={false}
                     />
                 </Box>
-                <Box p={3} style={{paddingTop: 48, paddingBottom: 12}}>
+                <Box p={1} style={{paddingTop: 48, paddingBottom: 12}}>
                   <GridPlaylists
                       playlistLists={{'New Playlists': this.props.playlists}}
                       loading={this.props.loading}
