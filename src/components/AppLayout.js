@@ -70,7 +70,6 @@ class AppLayout extends React.Component {
         if (event._id === this.props.currentTrack._id) {
             event.playlistId = this.props.currentTrack.playlistId
         }
-        console.log(event)
         this.props.syncCurrentTrack(Object.assign(event, {playing: true}))
     }
 
