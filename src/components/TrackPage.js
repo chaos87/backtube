@@ -92,7 +92,11 @@ const styles = theme => ({
     zIndex: 9,
   },
   nested: {
-    paddingLeft: theme.spacing(13)
+    paddingLeft: theme.spacing(2)
+  },
+  nestedButton: {
+    display: 'flex',
+    justifyContent: 'center'
   },
   playlistTitle: {
       color: theme.palette.primary.main,
@@ -345,7 +349,7 @@ class TrackPage extends Component {
                                 <List component="div" disablePadding>
                                     <ListItem
                                       button
-                                      className={classes.nested}
+                                      className={classes.nestedButton}
                                       >
                                           <FlexiLink
                                               isLoggedIn={this.props.isLoggedIn}
