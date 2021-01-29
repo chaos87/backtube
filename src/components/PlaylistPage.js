@@ -327,7 +327,7 @@ class PlaylistPage extends Component {
               review: 'review' in this.props.location.playlist ? this.props.location.playlist.review
                       : 'description' in this.props.location.playlist ? this.props.location.playlist.description : null,
               loadedReview: 'review' in this.props.location.playlist ? this.props.location.playlist.review
-                      : 'description' in this.props.location.playlist ? this.props.location.playlist.description : null,
+                      : 'description' in this.props.location.playlist ? description : null,
               tracks: newTracks,
               themes: 'themes' in this.props.location.playlist ? this.props.location.playlist.themes : [],
               private: 'private' in this.props.location.playlist ? this.props.location.playlist.private : false,
@@ -398,7 +398,7 @@ class PlaylistPage extends Component {
                   _id: this.props.match.params.id,
                   title: this.props.playlist.title,
                   review: this.props.playlist.review,
-                  loadedReview: this.props.playlist.review,
+                  loadedReview: this.props.playlist.loadedReview,
                   tracks: this.props.playlist.tracks,
                   private: this.props.playlist.private,
                   source: this.props.playlist.source,
