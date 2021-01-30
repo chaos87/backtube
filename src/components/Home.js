@@ -194,7 +194,7 @@ class Home extends React.Component {
                           </Fab>
                       </FlexiLink>
                 </Box>
-                <Box p={1} style={{paddingTop: 48, paddingBottom: 12}}>
+                <Box p={1} style={{paddingTop: 48}}>
                   <GridThemes
                       themeLists={{'New Themes': this.props.themes}}
                       loading={this.props.loading}

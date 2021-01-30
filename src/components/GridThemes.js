@@ -295,8 +295,8 @@ function mapStateToProps(state, props) {
     addLoading: state.player.addLoading,
     itemAddedId: state.player.itemAddedId,
     isLoggedIn: state.auth.isLoggedIn,
-    accessToken: state.auth.session !== null ? state.auth.session.accessToken.jwtToken: null,
-    userid: state.auth.session !== null ? state.auth.session.accessToken.payload.sub: null,
+    accessToken: state.auth.session ? state.auth.session.accessToken.jwtToken: null,
+    userid: state.auth.session ? state.auth.session.accessToken.payload.sub: null,
     currentTrack: state.player.currentTrack ? state.player.currentTrack : '',
     subTab: state.nav.subTab ? state.nav.subTab : 0,
   };
