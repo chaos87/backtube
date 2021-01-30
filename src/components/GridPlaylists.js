@@ -280,7 +280,6 @@ class GridPlaylists extends Component {
   }
 
   render(){
-      console.log('playlists', this.props.playlistLists)
       const { classes } = this.props;
       return (
           <React.Fragment>
