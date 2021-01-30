@@ -9,6 +9,9 @@ import EditIcon from '@material-ui/icons/Edit';
 import DoneIcon from '@material-ui/icons/Done';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Fade from '@material-ui/core/Fade';
@@ -124,9 +127,20 @@ const styles = theme => ({
     button: {
         color: 'white',
         marginBottom: theme.spacing(2),
+        marginTop: theme.spacing(2),
+    },
+    buttonImage: {
+        width: 240,
+        height: 240,
+        marginBottom: theme.spacing(4),
+        marginTop: theme.spacing(2),
+        padding: 0
     },
     titleLink: {
         textDecoration: 'none'
+    },
+    gridList: {
+        width: 240
     },
     link: {
         color: theme.palette.primary.main,
@@ -134,7 +148,11 @@ const styles = theme => ({
         "&:hover": {
             textDecoration: 'underline'
         }
-    }
+    },
+    themeCardIcon: {
+      height: 240,
+      fontSize: 60
+    },
 });
 
 
@@ -148,6 +166,7 @@ class ThemePage extends Component {
           tags: [],
           creator : {},
           date: '',
+          file: '',
           editing: false,
           fade: false,
       };
@@ -175,6 +194,7 @@ class ThemePage extends Component {
               tags: this.props.location.theme.tags,
               creator: this.props.location.theme.creator,
               date: this.props.location.theme.updatedAt,
+              file: this.props.location.theme.thumbnail,
               editing: 'editing' in this.props.location ? this.props.location.editing : false,
           })
           MixPanel.track('View Theme Page', {
@@ -200,6 +220,7 @@ class ThemePage extends Component {
                       date: this.props.theme.updatedAt,
                       playlists: this.props.theme.playlists,
                       tags: this.props.theme.tags,
+                      file: this.props.theme.thumbnail,
                   })
                   MixPanel.track('View Theme Page', {
                       'Theme ID': this.props.match.params.id,
@@ -215,6 +236,7 @@ class ThemePage extends Component {
 
   toggleEditing = async () => {
       await this.setState({ editing: !this.state.editing })
+      let file = this.uploadInput.files.length > 0 ? this.uploadInput.files[0] : this.state.file;
       if (!this.state.editing){
           if (this.state._id){
               await this.props.updateTheme({
@@ -222,6 +244,8 @@ class ThemePage extends Component {
                   id: this.state._id,
                   title:  this.state.title,
                   description: this.state.description,
+                  folder: 'themes',
+                  file: file,
                   tags: this.state.tags,
               })
           } else {
@@ -229,6 +253,8 @@ class ThemePage extends Component {
                   accessToken: this.props.accessToken,
                   title:  this.state.title,
                   description: this.state.description,
+                  folder: 'themes',
+                  file: file,
                   tags: this.state.tags,
               }).then(res => {
                   MixPanel.track('Create Theme', {
@@ -247,6 +273,12 @@ class ThemePage extends Component {
       this.setState({
         [name]: value,
       });
+  }
+
+  handleImageChange = (event) => {
+      this.setState({
+        file: URL.createObjectURL(event.target.files[0])
+      })
   }
 
   handleRTEChange = (event) => {
@@ -322,33 +354,54 @@ class ThemePage extends Component {
                           <Typography variant="h6" className={classes.title}>
                               {this.state.title}
                           </Typography>}
-                       <Grid
-                           container
-                           justify="center"
-                           alignItems="center"
-                           direction="row"
-                           className={classes.editContainer}
-                        >
-                           {this.props.isLoggedIn && this.props.userid === this.state.creator._id &&
-                               <Fab
-                                   aria-label="edit"
-                                   className={classes.editIcon}
-                                   onClick={this.toggleEditing}
-                                   disabled={this.props.isSaving}
-                               >
-                                   {this.state.editing ? <DoneIcon />: <EditIcon />}
-                                   {this.props.isSaving &&
-                                       <CircularProgress color="secondary" size={68} className={classes.fabProgress} />}
-                               </Fab>
-                           }
-                         </Grid>
+                          <Grid
+                              container
+                              justify="center"
+                              alignItems="center"
+                              direction="row"
+                              className={classes.editContainer}
+                           >
+                              {this.props.isLoggedIn && this.props.userid === this.state.creator._id &&
+                                  <Fab
+                                      aria-label="edit"
+                                      className={classes.editIcon}
+                                      onClick={this.toggleEditing}
+                                      disabled={this.props.isSaving}
+                                  >
+                                      {this.state.editing ? <DoneIcon />: <EditIcon />}
+                                      {this.props.isSaving &&
+                                          <CircularProgress color="secondary" size={68} className={classes.fabProgress} />}
+                                  </Fab>
+                              }
+                            </Grid>
+                          <Button
+                              variant="contained"
+                              component="label"
+                              color="inherit"
+                              className={classes.buttonImage}
+                          >
+                              <input
+                                   accept="image/*"
+                                   style={{ display: "none" }}
+                                   type="file"
+                                   onChange={this.handleImageChange}
+                                   ref={(ref) => { this.uploadInput = ref; }}
+                                   disabled={!this.state.editing}
+                              />
+                              {this.state.file ? <GridList cellHeight={240} className={classes.gridList} cols={1}>
+                                   <GridListTile cols={1}>
+                                     <img src={this.state.file} alt={this.state.title} />
+                                   </GridListTile>
+                              </GridList>
+                              : <ForumIcon color="primary" className={classes.themeCardIcon}/>}
+                          </Button>
                     </Grid>
                        <Box p={3} className={classes.description}>
                            <MUIRichTextEditor
                                 name="description"
                                 label="Explain what this theme is about. Add numbered/bullet point rules so that other users understand your theme."
                                 defaultValue={this.state.loadedDescription}
-                                controls={["bold", "italic", "underline", "strikethrough", "link", "media","numberList", "bulletList", "quote", "clear"]}
+                                controls={["bold", "italic", "underline", "strikethrough", "link", "numberList", "bulletList", "quote", "clear"]}
                                 inlineToolbar={true}
                                 toolbar={this.state.editing}
                                 maxLength={2000}

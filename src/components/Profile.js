@@ -157,10 +157,11 @@ class Profile extends React.Component {
         if (!this.state.editing){
             let avatar = this.uploadInput.files.length > 0 ? this.uploadInput.files[0] : this.state.file;
             await this.props.update({
-                'username': this.state.username,
-                'file': avatar,
-                'accessToken': this.props.accessToken,
-                'userSub': this.props.userid
+                username: this.state.username,
+                file: avatar,
+                accessToken: this.props.accessToken,
+                id: this.props.userid,
+                folder: 'avatars',
             })
             .then(res => {
               if (!this.props.isUpdated) {
@@ -238,28 +239,28 @@ class Profile extends React.Component {
                     <form className={classes.form} noValidate>
                       <Grid container spacing={2}>
                           <Grid item xs={12}>
-                          <IconButton
-                              variant="contained"
-                              component="label"
-                              color="inherit"
-                              className={classes.button}
-                          >
-                              <input
-                                   accept="image/*"
-                                   style={{ display: "none" }}
-                                   type="file"
-                                   onChange={this.handleAvatarChange}
-                                   ref={(ref) => { this.uploadInput = ref; }}
-                                   disabled={!this.state.editing}
-                              />
-                              <Avatar
-                                alt={this.state.username.toUpperCase()}
-                                src={this.state.file}
-                                aria-label="open account menu"
-                                className={classes.avatar}
+                              <IconButton
+                                  variant="contained"
+                                  component="label"
+                                  color="inherit"
+                                  className={classes.button}
                               >
-                            </Avatar>
-                          </IconButton>
+                                  <input
+                                       accept="image/*"
+                                       style={{ display: "none" }}
+                                       type="file"
+                                       onChange={this.handleAvatarChange}
+                                       ref={(ref) => { this.uploadInput = ref; }}
+                                       disabled={!this.state.editing}
+                                  />
+                                  <Avatar
+                                    alt={this.state.username.toUpperCase()}
+                                    src={this.state.file}
+                                    aria-label="open account menu"
+                                    className={classes.avatar}
+                                  >
+                                </Avatar>
+                              </IconButton>
                           </Grid>
                           <Grid item xs={12}>
                             {this.state.editing ? <TextField

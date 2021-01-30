@@ -1,52 +1,14 @@
 import { baseURL } from '../config/urls';
+import { uploadImageToS3 } from '../services/s3';
 import { addMosaicToObject } from '../services/utils';
 
 export const updateProfileApi = async profile => {
   // Store avatar file in S3
-  let avatarResponse = profile.file;
+  let avatarResponse = await uploadImageToS3(profile);
   const accessToken = profile.accessToken;
-  if (profile.file !== null && profile.file !== undefined
-      && profile.file instanceof Object) {
-      let fileParts = profile.file.name.split('.');
-      let fileName = 'avatars/' + profile.userSub;
-      let fileType = fileParts[1];
-
-      const uploadUrl = baseURL + `/api/uploadAvatar`;
-      avatarResponse = await fetch(uploadUrl, {method: 'POST',
-          body: JSON.stringify({
-              fileName: fileName,
-              fileType: fileType
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-            'accessToken': accessToken
-          }
-      })
-      .then(response => {
-          return response.json()
-      })
-      .then(response => {
-        const signedRequest = response.signedRequest;
-        const url = response.url;
-        console.log("Received a signed request " + signedRequest);
-        let putResult = fetch(signedRequest,{method: 'PUT',
-            body: profile.file,
-            headers: {
-              'Content-Type': fileType
-            }
-          })
-          .then(result => {
-            return url
-          })
-          .catch(error => {
-            return error
-          })
-          return putResult;
-      });
-  }
   // Update username in Cognito
   const username = profile.username;
-  const userSub = profile.userSub;
+  const userSub = profile.id;
   const userUrl = baseURL + `/auth/user`;
   await fetch(userUrl, {method: 'PUT',
       headers: {

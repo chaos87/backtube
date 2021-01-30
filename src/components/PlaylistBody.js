@@ -127,7 +127,7 @@ const PlaylistBody = React.memo(function PlaylistBody(props) {
                                "Let other backtubers know what you're thinking of this playlist."
                            }
                            defaultValue={props.loadedReview}
-                           controls={["bold", "italic", "underline", "strikethrough", "link", "media","numberList", "bulletList", "quote", "clear"]}
+                           controls={["bold", "italic", "underline", "strikethrough", "link","numberList", "bulletList", "quote", "clear"]}
                            inlineToolbar={true}
                            toolbar={props.editing}
                            maxLength={10000}

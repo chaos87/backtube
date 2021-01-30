@@ -1,4 +1,5 @@
 import { baseURL } from '../config/urls';
+import { uploadImageToS3 } from '../services/s3';
 import { addMosaicToObject } from '../services/utils';
 
 export const updateThemeApi = async (themeInfo) => {
@@ -7,13 +8,14 @@ export const updateThemeApi = async (themeInfo) => {
     const title = themeInfo.title;
     const description = 'description' in themeInfo ? themeInfo.description : '';
     const tags = 'tags' in themeInfo ? themeInfo.tags : [];
+    let imageResponse = await uploadImageToS3(themeInfo);
     const putUrl = baseURL + `/api/theme/` + themeId;
     let theme = await fetch(putUrl, { method: 'PUT',
         headers: {
           'accessToken': accessToken,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({"title": title, "description": description, "tags": tags})
+        body: JSON.stringify({"title": title, "description": description, "tags": tags, "thumbnail": imageResponse})
     })
     .then(res => {
         return res.json();
@@ -30,12 +32,14 @@ export const createThemeApi = async (themeInfo) => {
     const description = 'description' in themeInfo ? themeInfo.review : '';
     const tags = 'tags' in themeInfo ? themeInfo.tags : [];
     const postUrl = baseURL + `/api/theme/`;
+    // upload image to S3
+    let imageResponse = await uploadImageToS3(themeInfo);
     let theme = await fetch(postUrl, { method: 'POST',
         headers: {
           'accessToken': accessToken,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({"title": title, "description": description, "tags": tags})
+        body: JSON.stringify({"title": title, "description": description, "tags": tags, "thumbnail": imageResponse})
     })
     .then(res => {
         return res.json();
