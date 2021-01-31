@@ -140,7 +140,8 @@ const styles = theme => ({
         textDecoration: 'none'
     },
     gridList: {
-        width: 240
+        width: 240,
+        padding: 0
     },
     link: {
         color: theme.palette.primary.main,
@@ -388,12 +389,15 @@ class ThemePage extends Component {
                                    ref={(ref) => { this.uploadInput = ref; }}
                                    disabled={!this.state.editing}
                               />
-                              {this.state.file ? <GridList cellHeight={240} className={classes.gridList} cols={1}>
-                                   <GridListTile cols={1}>
-                                     <img src={this.state.file} alt={this.state.title} />
-                                   </GridListTile>
-                              </GridList>
-                              : <ForumIcon color="primary" className={classes.themeCardIcon}/>}
+                              <Box boxShadow={3}>
+                                  {this.state.file ?
+                                      <GridList cellHeight={240} className={classes.gridList} cols={1}>
+                                       <GridListTile cols={1}>
+                                         <img src={this.state.file} alt={this.state.title} />
+                                       </GridListTile>
+                                      </GridList>
+                                  : <ForumIcon color="primary" className={classes.themeCardIcon}/>}
+                              </Box>
                           </Button>
                     </Grid>
                        <Box p={3} className={classes.description}>
