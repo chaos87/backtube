@@ -29,7 +29,7 @@ export const updateThemeApi = async (themeInfo) => {
 export const createThemeApi = async (themeInfo) => {
     const accessToken = themeInfo.accessToken;
     const title = themeInfo.title;
-    const description = 'description' in themeInfo ? themeInfo.review : '';
+    const description = 'description' in themeInfo ? themeInfo.description : '';
     const tags = 'tags' in themeInfo ? themeInfo.tags : [];
     const postUrl = baseURL + `/api/theme/`;
     // upload image to S3
