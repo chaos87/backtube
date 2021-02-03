@@ -121,7 +121,6 @@ class Profile extends React.Component {
             const token = this.props.accessToken
             this.props.hitApi(token)
         }
-
         this.fetchProfile();
     }
 

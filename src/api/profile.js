@@ -98,3 +98,21 @@ export const getCurrentProfileApi = async userInfo => {
     })
     return profile;
 }
+
+export const createProfileApi = async (userInfo) => {
+    let response = await fetch(baseURL + '/api/profile', {
+      method: 'POST',
+      body: JSON.stringify(userInfo),
+      headers: {
+        'Content-Type': 'application/json',
+        'accessToken': userInfo.accessToken
+      }
+    })
+    .then(res => {
+        return res.json();
+    })
+    .catch(err => {
+        return err;
+    })
+    return response;
+}

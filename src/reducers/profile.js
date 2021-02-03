@@ -2,6 +2,9 @@ import {
     PROFILE_UPDATE_STARTED,
     PROFILE_UPDATE_FAILED,
     PROFILE_UPDATE_SUCCESS,
+    PROFILE_CREATE_STARTED,
+    PROFILE_CREATE_FAILED,
+    PROFILE_CREATE_SUCCESS,
     PROFILE_READ_STARTED,
     PROFILE_READ_FAILED,
     PROFILE_READ_SUCCESS,
@@ -42,6 +45,27 @@ const profileReducer = (state = initialState, action) => {
         isUpdated: false,
         error: action.payload.error,
       }
+      case PROFILE_CREATE_STARTED:
+        return {
+            ...state,
+            isSaving: true,
+            isUpdated: false,
+            error: null
+        }
+      case PROFILE_CREATE_SUCCESS:
+        return {
+            ...state,
+            isSaving: false,
+            error: null,
+            isUpdated: true,
+        }
+      case PROFILE_CREATE_FAILED:
+        return {
+          ...state,
+          isSaving: false,
+          isUpdated: false,
+          error: action.payload.error,
+        }
     case PROFILE_READ_STARTED:
         return {
             ...state,

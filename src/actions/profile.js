@@ -2,6 +2,9 @@ import {
     PROFILE_UPDATE_STARTED,
     PROFILE_UPDATE_FAILED,
     PROFILE_UPDATE_SUCCESS,
+    PROFILE_CREATE_STARTED,
+    PROFILE_CREATE_FAILED,
+    PROFILE_CREATE_SUCCESS,
     PROFILE_READ_STARTED,
     PROFILE_READ_FAILED,
     PROFILE_READ_SUCCESS,
@@ -9,7 +12,7 @@ import {
     PROFILE_GET_CURRENT_FAILED,
     PROFILE_GET_CURRENT_SUCCESS
 } from '../constants/actionTypes';
-import { updateProfileApi, readProfileApi, getCurrentProfileApi } from '../api/profile';
+import { updateProfileApi, readProfileApi, getCurrentProfileApi, createProfileApi } from '../api/profile';
 import { checkAuth, refreshAuthTokenStarted } from './auth';
 
 
@@ -100,6 +103,35 @@ const getCurrentProfileStarted = () => ({
 
 const getCurrentProfileFailed = error => ({
   type: PROFILE_GET_CURRENT_FAILED,
+  payload: {
+    error
+  }
+});
+
+export function createProfile(profileInfo) {
+  return function(dispatch) {
+    dispatch(createProfileStarted())
+    return createProfileApi(profileInfo)
+      .then(data => {
+          dispatch(createProfileSuccess(data));
+      })
+      .catch(err => {
+          dispatch(createProfileFailed(err.message));
+      });
+  }
+}
+
+const createProfileSuccess = (data) => ({
+  type: PROFILE_CREATE_SUCCESS,
+  payload: data
+});
+
+const createProfileStarted = () => ({
+  type: PROFILE_CREATE_STARTED
+});
+
+const createProfileFailed = error => ({
+  type: PROFILE_CREATE_FAILED,
   payload: {
     error
   }
