@@ -106,6 +106,7 @@ const styles = theme => ({
          overflow: "hidden",
          textOverflow: "ellipsis",
          width: "100%",
+         height: "100%",
          backgroundColor: theme.palette.primary.main,
     },
     cardFocus: {
