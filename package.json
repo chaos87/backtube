@@ -18,6 +18,7 @@
     "react": "^16.13.1",
     "react-beautiful-dnd": "^13.0.0",
     "react-dom": "^16.13.1",
+    "react-google-button": "^0.7.2",
     "react-jinke-music-player": "^4.21.2",
     "react-modal-video": "^1.2.5",
     "react-redux": "^7.2.1",

@@ -16,12 +16,18 @@ import { withRouter } from "react-router-dom";
 import { ModalLink } from "react-router-modal-gallery";
 import { connect } from 'react-redux';
 import { registerUser } from '../actions/register';
+import { refreshAuthToken } from '../actions/auth';
+import { readProfile, createProfile } from '../actions/profile';
 import { delay } from '../services/utils';
 import { MixPanel } from './MixPanel';
+import GoogleButton from 'react-google-button';
+import { getSearchParam } from '../services/url';
+import { cognitoURL } from '../config/urls';
+import { parseJwt } from "../services/utils"
 
 const styles = theme => ({
   paper: {
-    marginTop: theme.spacing(5),
+    marginTop: theme.spacing(2),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -57,6 +63,17 @@ const styles = theme => ({
   },
   alert: {
     visibility: 'hidden'
+  },
+  buttonContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: theme.spacing(4)
+  },
+  important: {
+      marginTop: theme.spacing(1),
+      color: 'red'
   }
 });
 
@@ -77,6 +94,55 @@ class SignUp extends Component {
         if (this.props.reg.isRegistered && !this.props.reg.isConfirmed) {
             setTimeout(function () { this.props.history.push('/confirm'); }.bind(this), 1000);
         }
+        const code = getSearchParam(this.props.location, 'code');
+        if (code) {
+            this.handlePostGoogleSignUp(code);
+        }
+    }
+
+    handlePostGoogleSignUp = async (code) => {
+        const payload = {
+            "grant_type": "authorization_code",
+            "client_id": "13jgajqggg04mq38g14iv6lba5",
+            "redirect_uri": "https://backtube.app/register",
+            "code": code
+        }
+        const formBody = Object.keys(payload).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(payload[key])).join('&')
+        let response = await fetch(cognitoURL + '/oauth2/token', {
+          method: 'POST',
+          body: formBody,
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        })
+        .then(res => {
+            return res.json();
+        })
+        .catch(err => {
+            return err;
+        })
+        const username = parseJwt(response['access_token'])['username']
+        const sub = parseJwt(response['access_token'])['sub']
+        const email = parseJwt(response['id_token'])['email']
+        await this.props.refreshToken(username, response['refresh_token']).then(res => {
+            this.props.createProfile({
+                id: sub,
+                username: username,
+                accessToken: this.props.auth.session.accessToken.jwtToken,
+            })
+        })
+        await this.props.read({
+            accessToken: this.props.auth.session.accessToken.jwtToken,
+            userSub: sub
+        });
+        MixPanel.identify(sub);
+        MixPanel.people.set({
+            $name: username,
+            $email: email,
+            $distinct_id: sub
+        });
+        MixPanel.track('Sign Up');
+        this.props.history.push('/');
     }
 
     handleSubmit = (event) => {
@@ -129,6 +195,11 @@ class SignUp extends Component {
         }
         return password === confirmPassword ? true: false;
     }
+
+    handleGoogleSubmit = async (event) => {
+        event.preventDefault();
+        window.location.assign(cognitoURL + '/oauth2/authorize?redirect_uri=https://backtube.app/register&response_type=code&client_id=13jgajqggg04mq38g14iv6lba5&identity_provider=Google');
+    };
 
     render(){
      const { classes } = this.props;
@@ -206,6 +277,15 @@ class SignUp extends Component {
                   </Button>
                   {this.props.reg.isFetching && <CircularProgress size={24} className={classes.buttonProgress} />}
               </div>
+              <div className={classes.buttonContainer}>
+                <GoogleButton
+                    label='Sign Up With Google'
+                    onClick={this.handleGoogleSubmit}
+                  />
+                  <Typography className={classes.important} component="h1" variant="caption">
+                    (If you already signed up with email/password method, this will create an extra user. Merge is not possible.)
+                  </Typography>
+              </div>
               <Grid container justify="flex-end">
                 <Grid item>
                     <ModalLink to='/login'>
@@ -222,13 +302,17 @@ class SignUp extends Component {
 
 function mapStateToProps(state, props) {
   return {
-    reg: state.register
+    reg: state.register,
+    auth: state.auth,
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    register: (userInfo) => dispatch(registerUser(userInfo))
+    register: (userInfo) => dispatch(registerUser(userInfo)),
+    refreshToken: (username, token) => dispatch(refreshAuthToken(username, token)),
+    read: userInfo => dispatch(readProfile(userInfo)),
+    createProfile: userInfo => dispatch(createProfile(userInfo)),
   };
 }
 
