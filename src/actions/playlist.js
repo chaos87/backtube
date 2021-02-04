@@ -113,6 +113,7 @@ export function createPlaylist(userInfo) {
           dispatch(createPlaylistSuccess(data));
       })
       .catch(err => {
+          console.log(err.message)
           dispatch(createPlaylistFailed(err.message));
       });
   }

@@ -1,5 +1,6 @@
 import { baseURL, streamingURL } from '../config/urls';
 import { addMosaicToObject } from '../services/utils';
+import { prepareAudioList } from '../actions/player';
 
 export const updatePlaylistApi = async (playlistInfo) => {
     const accessToken = playlistInfo.accessToken;
@@ -39,11 +40,14 @@ export const updatePlaylistApi = async (playlistInfo) => {
 export const createPlaylistApi = async (playlistInfo) => {
     const accessToken = playlistInfo.accessToken;
     const title = playlistInfo.title;
-    const tracks = playlistInfo.playlist;
+    let tracks = playlistInfo.playlist;
     const themes = playlistInfo.themes;
     const review = 'review' in playlistInfo ? playlistInfo.review : '';
     const tags = 'tags' in playlistInfo ? playlistInfo.tags : [];
     const privacy = playlistInfo.private;
+    if (!('musicSrc' in tracks[0])) {
+        tracks = tracks.map( track => prepareAudioList(track, track.source, null, null, track.album, null) )
+    }
     const newTracks = tracks.map(
         ({ _id, name, musicSrc, source, singer, cover, album, duration, playlistId  }) => (
             {

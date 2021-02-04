@@ -80,7 +80,8 @@ const styles = theme => ({
     },
     title: {
         fontWeight: 'bold',
-        color: 'white'
+        color: 'white',
+        height: 56
     },
     titleSection: {
         fontWeight: 'bold',
@@ -118,7 +119,7 @@ const styles = theme => ({
         "&:hover": {
             textDecoration: 'underline',
             textDecorationColor: 'white',
-        }
+        },
     },
 });
 

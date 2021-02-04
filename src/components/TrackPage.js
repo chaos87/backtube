@@ -268,7 +268,6 @@ class TrackPage extends Component {
       const source = 'track' in this.props.location ? this.props.location.track.source : this.props.playlist.source;
       const creator = 'creator' in this.props.location ? this.props.location.creator : {_id: ''};
       const album = 'track' in this.props.location ? this.props.location.track.album : this.props.playlist.title;
-
       return(
           <div className={classes.root}>
               <AppBar className={classes.bar} position="sticky">
